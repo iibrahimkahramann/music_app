@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 
 class PlaylistDetailView extends StatefulWidget {
-  const PlaylistDetailView({super.key});
+  const PlaylistDetailView({super.key, String? playlistId});
 
   @override
   State<PlaylistDetailView> createState() => _PlaylistDetailViewState();

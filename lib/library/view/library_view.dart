@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
@@ -132,158 +133,167 @@ class LibraryView extends ConsumerWidget {
                         itemCount: musicFiles.length,
                         itemBuilder: (context, index) {
                           final music = musicFiles[index];
-                          return Stack(
-                            children: [
-                              Container(
-                                width: width,
-                                height: height * 0.1,
-                                margin: EdgeInsets.only(bottom: height * 0.015),
-                                decoration: CustomTheme.customBoxDecoration(),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(width * 0.03,
-                                    height * 0.013, 0, height * 0.013),
-                                child: Container(
-                                  width: width * 0.16,
-                                  height: width * 0.16,
-                                  decoration: BoxDecoration(
-                                    color: CustomTheme.accentColor,
-                                    borderRadius: BorderRadius.circular(8),
+                          return GestureDetector(
+                            onTap: () => context.go('/music-detail'),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: width,
+                                  height: height * 0.1,
+                                  margin:
+                                      EdgeInsets.only(bottom: height * 0.015),
+                                  decoration: CustomTheme.customBoxDecoration(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(width * 0.03,
+                                      height * 0.013, 0, height * 0.013),
+                                  child: Container(
+                                    width: width * 0.16,
+                                    height: width * 0.16,
+                                    decoration: BoxDecoration(
+                                      color: CustomTheme.accentColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(width * 0.22,
-                                    height * 0.022, 0, height * 0.022),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          music.fileName.length > 25
-                                              ? '${music.fileName.substring(0, 25)}...'
-                                              : music.fileName,
-                                          style: CustomTheme.textTheme(context)
-                                              .bodyMedium,
-                                        ),
-                                        SizedBox(
-                                          height: height * 0.002,
-                                        ),
-                                        Text(
-                                          music.createdAt != null
-                                              ? '${music.createdAt!.day}/${music.createdAt!.month}/${music.createdAt!.year}'
-                                              : 'Tarih bilgisi yok',
-                                          style: CustomTheme.textTheme(context)
-                                              .bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.12,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Container(
-                                              height: height * 0.4,
-                                              child: Column(
-                                                children: <Widget>[
-                                                  ListTile(
-                                                    leading: Icon(
-                                                        Icons.music_note_sharp),
-                                                    title: Text(
-                                                      music.fileName.length > 25
-                                                          ? '${music.fileName.substring(0, 25)}...'
-                                                          : music.fileName,
-                                                      style:
-                                                          CustomTheme.textTheme(
-                                                                  context)
-                                                              .bodyMedium,
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  ListTile(
-                                                    leading: Icon(Icons
-                                                        .format_list_bulleted_sharp),
-                                                    title: Text(
-                                                      'Çalma Listesine Ekle',
-                                                      style:
-                                                          CustomTheme.textTheme(
-                                                                  context)
-                                                              .bodyMedium,
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  ListTile(
-                                                    leading: Icon(
-                                                        Icons.heart_broken),
-                                                    title: Text(
-                                                      'Favorilere Ekle',
-                                                      style:
-                                                          CustomTheme.textTheme(
-                                                                  context)
-                                                              .bodyMedium,
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  ListTile(
-                                                    leading: Icon(Icons.share),
-                                                    title: Text(
-                                                      'Paylaş',
-                                                      style:
-                                                          CustomTheme.textTheme(
-                                                                  context)
-                                                              .bodyMedium,
-                                                    ),
-                                                    onTap: () {
-                                                      Share.share(
-                                                          'Check out this music: ${music.fileName}');
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  ListTile(
-                                                    leading: Icon(Icons.delete),
-                                                    title: Text(
-                                                      'Sil',
-                                                      style:
-                                                          CustomTheme.textTheme(
-                                                                  context)
-                                                              .bodyMedium,
-                                                    ),
-                                                    onTap: () async {
-                                                      await ref.read(
-                                                          deleteMusicFileProvider(
-                                                              music.id));
-                                                      ref.invalidate(
-                                                          musicFilesProvider);
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Image.asset(
-                                        'assets/icons/menu.png',
-                                        height: height * 0.024,
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(width * 0.22,
+                                      height * 0.022, 0, height * 0.022),
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            music.fileName.length > 25
+                                                ? '${music.fileName.substring(0, 25)}...'
+                                                : music.fileName,
+                                            style:
+                                                CustomTheme.textTheme(context)
+                                                    .bodyMedium,
+                                          ),
+                                          SizedBox(
+                                            height: height * 0.002,
+                                          ),
+                                          Text(
+                                            music.createdAt != null
+                                                ? '${music.createdAt!.day}/${music.createdAt!.month}/${music.createdAt!.year}'
+                                                : 'Tarih bilgisi yok',
+                                            style:
+                                                CustomTheme.textTheme(context)
+                                                    .bodySmall,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        width: width * 0.12,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                height: height * 0.4,
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    ListTile(
+                                                      leading: Icon(Icons
+                                                          .music_note_sharp),
+                                                      title: Text(
+                                                        music.fileName.length >
+                                                                25
+                                                            ? '${music.fileName.substring(0, 25)}...'
+                                                            : music.fileName,
+                                                        style: CustomTheme
+                                                                .textTheme(
+                                                                    context)
+                                                            .bodyMedium,
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    ListTile(
+                                                      leading: Icon(Icons
+                                                          .format_list_bulleted_sharp),
+                                                      title: Text(
+                                                        'Çalma Listesine Ekle',
+                                                        style: CustomTheme
+                                                                .textTheme(
+                                                                    context)
+                                                            .bodyMedium,
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    ListTile(
+                                                      leading: Icon(
+                                                          Icons.heart_broken),
+                                                      title: Text(
+                                                        'Favorilere Ekle',
+                                                        style: CustomTheme
+                                                                .textTheme(
+                                                                    context)
+                                                            .bodyMedium,
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    ListTile(
+                                                      leading:
+                                                          Icon(Icons.share),
+                                                      title: Text(
+                                                        'Paylaş',
+                                                        style: CustomTheme
+                                                                .textTheme(
+                                                                    context)
+                                                            .bodyMedium,
+                                                      ),
+                                                      onTap: () {
+                                                        Share.share(
+                                                            'Check out this music: ${music.fileName}');
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    ListTile(
+                                                      leading:
+                                                          Icon(Icons.delete),
+                                                      title: Text(
+                                                        'Sil',
+                                                        style: CustomTheme
+                                                                .textTheme(
+                                                                    context)
+                                                            .bodyMedium,
+                                                      ),
+                                                      onTap: () async {
+                                                        await ref.read(
+                                                            deleteMusicFileProvider(
+                                                                music.id));
+                                                        ref.invalidate(
+                                                            musicFilesProvider);
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Image.asset(
+                                          'assets/icons/menu.png',
+                                          height: height * 0.024,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       );

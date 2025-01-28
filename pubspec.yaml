@@ -45,6 +45,8 @@ dependencies:
   path: ^1.9.0
   lottie: ^3.3.1
   share_plus: ^10.1.4
+  build_config: ^1.1.2
+  drift_dev: ^2.24.0
 
 dev_dependencies:
   flutter_test:
@@ -57,7 +59,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   build_runner: ^2.4.14
-  drift_dev: ^2.24.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

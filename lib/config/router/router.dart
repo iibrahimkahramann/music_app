@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/library/view/library_view.dart';
+import 'package:music_app/music_detail/view/music_detail_view.dart';
 import 'package:music_app/playlist_detail/view/playlist_detail_view.dart';
 import 'package:music_app/playlists/view/playlists_view.dart';
 import 'package:music_app/settings/view/settings_view.dart';
@@ -24,10 +25,14 @@ final router = GoRouter(
           const NoTransitionPage(child: PlaylistsView()),
     ),
     GoRoute(
-      path: '/playlist-detail',
+      path: '/playlist-detail/:id',
       name: 'playlist-detail',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: PlaylistDetailView()),
+      pageBuilder: (context, state) {
+        final id = state.pathParameters['id'];
+        return NoTransitionPage(
+          child: PlaylistDetailView(playlistId: id),
+        );
+      },
     ),
     GoRoute(
       path: '/settings',
@@ -39,7 +44,7 @@ final router = GoRouter(
       path: '/music-detail',
       name: 'music-detail',
       pageBuilder: (context, state) =>
-          const NoTransitionPage(child: SettingsView()),
+          const NoTransitionPage(child: MusicDetailView()),
     ),
   ],
 );
