@@ -3,19 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/config/router/router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-
-  // await EasyLocalization.ensureInitialized();
-
-  // await Init.instance.init();
-
+void main() {
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: MyApp(),
     ),
   );
