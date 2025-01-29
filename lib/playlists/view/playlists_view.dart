@@ -105,11 +105,6 @@ class PlaylistsView extends ConsumerWidget {
                                         SizedBox(
                                           height: height * 0.002,
                                         ),
-                                        Text(
-                                          '0 Music', // Müzik sayısını göster
-                                          style: CustomTheme.textTheme(context)
-                                              .bodySmall,
-                                        ),
                                       ],
                                     ),
                                   ],

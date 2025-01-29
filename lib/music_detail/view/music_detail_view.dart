@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
+import 'package:music_app/db/app_database.dart';
 
 class MusicDetailView extends StatefulWidget {
-  const MusicDetailView({super.key});
+  final MusicFile musicFile;
+
+  const MusicDetailView({
+    super.key,
+    required this.musicFile,
+  });
 
   @override
   State<MusicDetailView> createState() => _MusicDetailViewState();
@@ -20,7 +26,7 @@ class _MusicDetailViewState extends State<MusicDetailView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            context.go('/playlists');
+            context.go('/library');
           },
         ),
         title: Padding(
@@ -46,13 +52,15 @@ class _MusicDetailViewState extends State<MusicDetailView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: height * 0.01),
+              padding: EdgeInsets.only(
+                top: height * 0.01,
+              ),
               child: Center(
                 child: Container(
-                  width: 320,
-                  height: 320,
+                  width: 380,
+                  height: 370,
                   decoration: CustomTheme.customBoxDecoration()
-                      .copyWith(color: Colors.white),
+                      .copyWith(color: CustomTheme.accentColor),
                   child: Image.asset(
                     'assets/icons/music_filter.png',
                     color: Colors.white,
@@ -61,23 +69,26 @@ class _MusicDetailViewState extends State<MusicDetailView> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: width * 0.12, top: height * 0.04),
+              padding: EdgeInsets.only(left: width * 0.0, top: height * 0.04),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'music name',
-                    style: CustomTheme.textTheme(context).bodyLarge,
+                    widget.musicFile.fileName,
+                    style: CustomTheme.textTheme(context).bodyMedium,
                   ),
                   SizedBox(
                     height: height * 0.01,
                   ),
                   Text(
-                    'date time',
+                    widget.musicFile.createdAt != null
+                        ? '${widget.musicFile.createdAt!.day}/${widget.musicFile.createdAt!.month}/${widget.musicFile.createdAt!.year}'
+                        : 'No date available',
                     style: CustomTheme.textTheme(context)
                         .bodyMedium
                         ?.copyWith(color: Colors.grey),
                   ),
+                  SizedBox(height: height * 0.02),
                 ],
               ),
             )

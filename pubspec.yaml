@@ -47,6 +47,7 @@ dependencies:
   share_plus: ^10.1.4
   build_config: ^1.1.2
   drift_dev: ^2.24.0
+  shared_preferences: ^2.4.0
 
 dev_dependencies:
   flutter_test:

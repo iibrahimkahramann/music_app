@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/view/library_view.dart';
 import 'package:music_app/music_detail/view/music_detail_view.dart';
 import 'package:music_app/playlist_add_music/view/playlist_add_music_view.dart';
@@ -44,8 +45,10 @@ final router = GoRouter(
     GoRoute(
       path: '/music-detail',
       name: 'music-detail',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: MusicDetailView()),
+      pageBuilder: (context, state) {
+        final musicFile = state.extra as MusicFile;
+        return NoTransitionPage(child: MusicDetailView(musicFile: musicFile));
+      },
     ),
     GoRoute(
       path: '/playlist-add-music',

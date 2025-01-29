@@ -49,30 +49,6 @@ class SettingsView extends StatelessWidget {
                     SizedBox(
                       width: width * 0.05,
                     ),
-                    Image.asset('assets/icons/rateus.png'),
-                    SizedBox(
-                      width: width * 0.02,
-                    ),
-                    Text(
-                      'Rate Us',
-                      style: CustomTheme.textTheme(context).bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: height * 0.015,
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                width: width,
-                height: height * 0.06,
-                decoration: CustomTheme.customBoxDecoration(),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: width * 0.05,
-                    ),
                     Image.asset('assets/icons/terms.png'),
                     SizedBox(
                       width: width * 0.02,

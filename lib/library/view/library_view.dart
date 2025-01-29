@@ -134,7 +134,8 @@ class LibraryView extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           final music = musicFiles[index];
                           return GestureDetector(
-                            onTap: () => context.go('/music-detail'),
+                            onTap: () =>
+                                context.go('/music-detail', extra: music),
                             child: Stack(
                               children: [
                                 Container(

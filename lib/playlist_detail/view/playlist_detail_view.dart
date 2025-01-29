@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -65,16 +67,27 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                     width: 220,
                     height: 220,
                     decoration: CustomTheme.customBoxDecoration(),
-                    child: Image.asset(
-                      'assets/icons/music_filter.png',
-                      color: Colors.white,
-                    ),
+                    child: data.$1.imagePath != null &&
+                            data.$1.imagePath!.isNotEmpty &&
+                            File(data.$1.imagePath!).existsSync()
+                        ? Image.file(File(data.$1.imagePath!),
+                            fit: BoxFit.cover)
+                        : Icon(
+                            Icons.queue_music_outlined,
+                            color: Colors.white,
+                            size: width * 0.08,
+                          ),
                   ),
                 ),
                 SizedBox(height: height * 0.02),
                 Text(
                   data.$1.fileName,
                   style: CustomTheme.textTheme(context).bodyLarge,
+                ),
+                SizedBox(height: height * 0.001),
+                Text(
+                  '${data.$2.length} songs',
+                  style: CustomTheme.textTheme(context).bodySmall,
                 ),
                 SizedBox(height: height * 0.02),
                 ...data.$2
