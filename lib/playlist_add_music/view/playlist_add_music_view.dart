@@ -6,9 +6,10 @@ import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PlaylistAddMusicView extends ConsumerStatefulWidget {
-  final int musicId; // Eklenmek istenen müzik ID'si
+  final int? musicId; // Opsiyonel olarak değiştirildi
+  final String? playlistId; // Yeni eklendi
 
-  const PlaylistAddMusicView({super.key, required this.musicId});
+  const PlaylistAddMusicView({super.key, this.musicId, this.playlistId});
 
   @override
   ConsumerState<PlaylistAddMusicView> createState() =>
@@ -34,10 +35,16 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
   }
 
   Future<void> _addMusicToPlaylist(int playlistId) async {
-    await db.addMusicToPlaylist(playlistId, widget.musicId);
+    if (widget.musicId != null) {
+      await db.addMusicToPlaylist(playlistId, widget.musicId!);
+    }
     ref.read(playlistRefreshProvider.notifier).state++;
     if (context.mounted) {
-      context.go('/library');
+      if (widget.playlistId != null) {
+        context.go('/playlist-detail/${widget.playlistId}');
+      } else {
+        context.go('/library');
+      }
     }
   }
 
@@ -51,44 +58,183 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            context.go('/library');
+            if (widget.playlistId != null) {
+              context.go('/playlist-detail/${widget.playlistId}');
+            } else {
+              context.go('/library');
+            }
           },
         ),
         title: Padding(
-          padding: EdgeInsets.only(left: width * 0.19),
+          padding: EdgeInsets.only(left: width * 0.25),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Select Playlist',
+                'Select',
                 style: CustomTheme.textTheme(context)
                     .bodyMedium
                     ?.copyWith(color: Colors.white),
-              ),
-              Image.asset(
-                'assets/icons/add.png',
-                height: height * 0.029,
               ),
             ],
           ),
         ),
       ),
-      body: playlists.isEmpty
-          ? const Center(child: Text('Henüz çalma listesi yok'))
-          : ListView.builder(
-              itemCount: playlists.length,
-              itemBuilder: (context, index) {
-                final playlist = playlists[index];
-                return ListTile(
-                  // leading: playlist.imagePath != null
-                  //     ? Image.asset(playlist.imagePath!, width: 50, height: 50)
-                  //     : const Icon(Icons.music_note, color: Colors.white),
-                  title: Text(playlist.fileName,
-                      style: TextStyle(color: Colors.white)),
-                  onTap: () => _addMusicToPlaylist(playlist.id),
+      body: widget.musicId == null
+          ? FutureBuilder<List<MusicFile>>(
+              future: db.getAllMusicFiles(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final musicFiles = snapshot.data!;
+                return ListView.builder(
+                  itemCount: musicFiles.length,
+                  itemBuilder: (context, index) {
+                    final music = musicFiles[index];
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: width * 0.02, vertical: height * 0.007),
+                      decoration: CustomTheme.customBoxDecoration(),
+                      child: ListTile(
+                        leading: Container(
+                          width: width * 0.1,
+                          height: width * 0.1,
+                          decoration: BoxDecoration(
+                            color: CustomTheme.accentColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.music_note,
+                            color: Colors.white,
+                            size: width * 0.06,
+                          ),
+                        ),
+                        title: Text(
+                          music.fileName,
+                          style: CustomTheme.textTheme(context).bodyMedium,
+                        ),
+                        trailing: Icon(
+                          Icons.add_circle_outline,
+                          color: CustomTheme.accentColor,
+                          size: width * 0.07,
+                        ),
+                        onTap: () async {
+                          if (widget.playlistId != null) {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: CustomTheme.accentColor,
+                                  ),
+                                );
+                              },
+                            );
+
+                            await db.addMusicToPlaylist(
+                                int.parse(widget.playlistId!), music.id);
+                            ref.read(playlistRefreshProvider.notifier).state++;
+
+                            if (context.mounted) {
+                              // Yükleniyor göstergesini kapat
+                              Navigator.pop(context);
+                              // Başarılı mesajı göster
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Müzik çalma listesine eklendi',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: CustomTheme.accentColor,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              // Playlist detay sayfasına dön
+                              context
+                                  .go('/playlist-detail/${widget.playlistId}');
+                            }
+                          }
+                        },
+                      ),
+                    );
+                  },
                 );
               },
-            ),
+            )
+          : playlists.isEmpty
+              ? Center(
+                  child: Text(
+                    'Henüz çalma listesi yok',
+                    style: CustomTheme.textTheme(context).bodyLarge,
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: playlists.length,
+                  itemBuilder: (context, index) {
+                    final playlist = playlists[index];
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: width * 0.02, vertical: height * 0.007),
+                      decoration: CustomTheme.customBoxDecoration(),
+                      child: ListTile(
+                        leading: Container(
+                          width: width * 0.1,
+                          height: width * 0.1,
+                          decoration: BoxDecoration(
+                            color: CustomTheme.accentColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.queue_music,
+                            color: Colors.white,
+                            size: width * 0.06,
+                          ),
+                        ),
+                        title: Text(
+                          playlist.fileName,
+                          style: CustomTheme.textTheme(context).bodyMedium,
+                        ),
+                        trailing: Icon(
+                          Icons.add_circle_outline,
+                          color: CustomTheme.accentColor,
+                          size: width * 0.07,
+                        ),
+                        onTap: () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: CustomTheme.accentColor,
+                                ),
+                              );
+                            },
+                          );
+
+                          await _addMusicToPlaylist(playlist.id);
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Müzik çalma listesine eklendi',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: CustomTheme.accentColor,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }

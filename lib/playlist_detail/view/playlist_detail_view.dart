@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PlaylistDetailView extends ConsumerStatefulWidget {
   final String? playlistId; // Parametre ekledik
@@ -44,9 +47,15 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                     .bodyMedium
                     ?.copyWith(color: Colors.white),
               ),
-              Image.asset(
-                'assets/icons/search.png',
-                height: height * 0.029,
+              GestureDetector(
+                onTap: () {
+                  context.go(
+                      '/playlist-add-music?playlistId=${widget.playlistId}');
+                },
+                child: Image.asset(
+                  'assets/icons/add.png',
+                  height: height * 0.029,
+                ),
               ),
             ],
           ),
@@ -90,59 +99,257 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                   style: CustomTheme.textTheme(context).bodySmall,
                 ),
                 SizedBox(height: height * 0.02),
-                ...data.$2
-                    .map((music) => Stack(
+                data.$2.isEmpty
+                    ? Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              width: width,
-                              height: height * 0.1,
-                              margin: EdgeInsets.only(bottom: height * 0.015),
-                              decoration: CustomTheme.customBoxDecoration(),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(width * 0.03,
-                                  height * 0.013, 0, height * 0.013),
+                            GestureDetector(
+                              onTap: () {
+                                context.go(
+                                    '/playlist-add-music?playlistId=${widget.playlistId}');
+                              },
                               child: Container(
-                                width: width * 0.16,
-                                height: width * 0.16,
+                                width: width * 0.4,
+                                height: height * 0.05,
                                 decoration: BoxDecoration(
                                   color: CustomTheme.accentColor,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Add Music',
+                                    style: CustomTheme.textTheme(context)
+                                        .bodyMedium,
+                                  ),
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: height * 0.03,
+                            ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(width * 0.22,
-                                  height * 0.022, 0, height * 0.022),
-                              child: Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        music.fileName.length > 25
-                                            ? '${music.fileName.substring(0, 25)}...'
-                                            : music.fileName,
-                                        style: CustomTheme.textTheme(context)
-                                            .bodyMedium,
-                                      ),
-                                      SizedBox(height: height * 0.002),
-                                      Text(
-                                        music.createdAt?.toString() ??
-                                            'No date',
-                                        style: CustomTheme.textTheme(context)
-                                            .bodySmall,
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: width * 0.12),
-                                ],
+                              padding: EdgeInsets.only(
+                                  left: width * 0.2,
+                                  right: width * 0.2,
+                                  top: height * 0.0),
+                              child: Text(
+                                'No Music Yet. Add Music by Pressing the Add Music Button',
+                                style: CustomTheme.textTheme(context).bodySmall,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
-                        ))
-                    .toList(),
+                        ),
+                      )
+                    : Column(
+                        children: data.$2
+                            .map((music) => Stack(
+                                  children: [
+                                    Container(
+                                      width: width,
+                                      height: height * 0.1,
+                                      margin: EdgeInsets.only(
+                                          bottom: height * 0.015),
+                                      decoration:
+                                          CustomTheme.customBoxDecoration(),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(width * 0.03,
+                                          height * 0.013, 0, height * 0.013),
+                                      child: Container(
+                                        width: width * 0.16,
+                                        height: width * 0.16,
+                                        decoration: BoxDecoration(
+                                          color: CustomTheme.accentColor,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(width * 0.22,
+                                          height * 0.022, 0, height * 0.022),
+                                      child: Row(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                music.fileName.length > 25
+                                                    ? '${music.fileName.substring(0, 25)}...'
+                                                    : music.fileName,
+                                                style: CustomTheme.textTheme(
+                                                        context)
+                                                    .bodyMedium,
+                                              ),
+                                              SizedBox(height: height * 0.002),
+                                              Text(
+                                                music.createdAt?.toString() ??
+                                                    'No date',
+                                                style: CustomTheme.textTheme(
+                                                        context)
+                                                    .bodySmall,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: width * 0.12),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                right: width * 0.065,
+                                                top: height * 0.001),
+                                            child: Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    showModalBottomSheet(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Container(
+                                                          height: height * 0.3,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              ListTile(
+                                                                leading: Icon(Icons
+                                                                    .music_note_sharp),
+                                                                title: Text(
+                                                                  music.fileName
+                                                                              .length >
+                                                                          25
+                                                                      ? '${music.fileName.substring(0, 25)}...'
+                                                                      : music
+                                                                          .fileName,
+                                                                  style: CustomTheme
+                                                                          .textTheme(
+                                                                              context)
+                                                                      .bodyMedium,
+                                                                ),
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                              ListTile(
+                                                                leading: Icon(Icons
+                                                                    .format_list_bulleted_sharp),
+                                                                title: Text(
+                                                                  'Çalma Listesine Ekle',
+                                                                  style: CustomTheme
+                                                                          .textTheme(
+                                                                              context)
+                                                                      .bodyMedium,
+                                                                ),
+                                                                onTap: () {
+                                                                  context.go(
+                                                                      '/playlist-add-music',
+                                                                      extra: music
+                                                                          .id);
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                              ListTile(
+                                                                leading: Icon(
+                                                                    Icons
+                                                                        .share),
+                                                                title: Text(
+                                                                  'Paylaş',
+                                                                  style: CustomTheme
+                                                                          .textTheme(
+                                                                              context)
+                                                                      .bodyMedium,
+                                                                ),
+                                                                onTap: () {
+                                                                  Share.share(
+                                                                      'Check out this music: ${music.fileName}');
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                              ListTile(
+                                                                leading: Icon(
+                                                                    Icons
+                                                                        .delete),
+                                                                title: Text(
+                                                                  'Sil',
+                                                                  style: CustomTheme
+                                                                          .textTheme(
+                                                                              context)
+                                                                      .bodyMedium,
+                                                                ),
+                                                                onTap:
+                                                                    () async {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  final shouldDelete =
+                                                                      await showDialog<
+                                                                          bool>(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return CupertinoAlertDialog(
+                                                                        title: Text(
+                                                                            'Şarkıyı Çalma Listesinden Sil'),
+                                                                        content:
+                                                                            Text('Bu şarkıyı silmek istediğinizden emin misiniz?'),
+                                                                        actions: <Widget>[
+                                                                          CupertinoDialogAction(
+                                                                            isDefaultAction:
+                                                                                true,
+                                                                            child:
+                                                                                Text('İptal'),
+                                                                            onPressed: () =>
+                                                                                Navigator.of(context).pop(false),
+                                                                          ),
+                                                                          CupertinoDialogAction(
+                                                                            isDestructiveAction:
+                                                                                true,
+                                                                            child:
+                                                                                Text('Sil'),
+                                                                            onPressed: () =>
+                                                                                Navigator.of(context).pop(true),
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
+
+                                                                  if (shouldDelete ==
+                                                                      true) {
+                                                                    final playlistMusicNotifier =
+                                                                        ref.read(
+                                                                            playlistMusicProvider(widget.playlistId!).notifier);
+                                                                    await playlistMusicNotifier
+                                                                        .deleteMusicFromPlaylist(
+                                                                            music.id);
+                                                                  }
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Image.asset(
+                                                    'assets/icons/menu.png',
+                                                    height: height * 0.024,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ))
+                            .toList(),
+                      ),
               ],
             ),
           ),

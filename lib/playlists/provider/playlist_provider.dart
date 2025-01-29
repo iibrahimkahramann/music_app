@@ -31,6 +31,11 @@ class PlaylistNotifier extends StateNotifier<List<PlaylistFile>> {
       ),
     ];
   }
+
+  Future<void> deletePlaylist(int playlistId) async {
+    await database.deletePlaylist(playlistId);
+    state = state.where((playlist) => playlist.id != playlistId).toList();
+  }
 }
 
 final databaseProvider = Provider((ref) => AppDatabase());

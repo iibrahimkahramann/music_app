@@ -10,51 +10,64 @@ import 'package:music_app/settings/view/settings_view.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+Page<dynamic> fadeScalePage(
+    {required Widget child, required GoRouterState state}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 1.0, end: 1.0).animate(animation),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/library',
   routes: [
     GoRoute(
       path: '/library',
-      name: 'library',
       pageBuilder: (context, state) =>
-          const NoTransitionPage(child: LibraryView()),
+          fadeScalePage(child: const LibraryView(), state: state),
     ),
     GoRoute(
       path: '/playlists',
-      name: 'playlists',
       pageBuilder: (context, state) =>
-          const NoTransitionPage(child: PlaylistsView()),
+          fadeScalePage(child: const PlaylistsView(), state: state),
     ),
     GoRoute(
       path: '/playlist-detail/:id',
-      name: 'playlist-detail',
       pageBuilder: (context, state) {
-        final id = state.pathParameters['id'] as String;
-        return NoTransitionPage(
-          child: PlaylistDetailView(playlistId: id),
-        );
+        final id = state.pathParameters['id']!;
+        return fadeScalePage(
+            child: PlaylistDetailView(playlistId: id), state: state);
       },
     ),
     GoRoute(
       path: '/settings',
-      name: 'settings',
       pageBuilder: (context, state) =>
-          const NoTransitionPage(child: SettingsView()),
+          fadeScalePage(child: const SettingsView(), state: state),
     ),
     GoRoute(
       path: '/music-detail',
-      name: 'music-detail',
       pageBuilder: (context, state) {
         final musicFile = state.extra as MusicFile;
-        return NoTransitionPage(child: MusicDetailView(musicFile: musicFile));
+        return fadeScalePage(
+            child: MusicDetailView(musicFile: musicFile), state: state);
       },
     ),
     GoRoute(
       path: '/playlist-add-music',
-      pageBuilder: (context, state) {
-        final musicId = state.extra as int;
-        return NoTransitionPage(child: PlaylistAddMusicView(musicId: musicId));
+      builder: (context, state) {
+        final musicId = state.extra as int?;
+        final playlistId = state.uri.queryParameters['playlistId'];
+        return PlaylistAddMusicView(musicId: musicId, playlistId: playlistId);
       },
     ),
   ],

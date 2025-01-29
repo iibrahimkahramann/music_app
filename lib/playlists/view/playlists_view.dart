@@ -8,6 +8,8 @@ import 'package:music_app/bar/navbar/nav_bar.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/playlists/controller/playlist_controller.dart';
 import 'package:music_app/playlists/provider/playlist_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/cupertino.dart';
 
 class PlaylistsView extends ConsumerWidget {
   const PlaylistsView({super.key});
@@ -62,58 +64,183 @@ class PlaylistsView extends ConsumerWidget {
                       ),
                     )
                   : Column(
-                      children: playlists.map((playlist) {
-                        return GestureDetector(
-                          onTap: () =>
-                              context.go('/playlist-detail/${playlist.id}'),
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: width,
-                                height: height * 0.115,
-                                color: Colors.black,
-                              ),
-                              Container(
-                                width: width * 0.22,
-                                height: height * 0.1,
-                                decoration: CustomTheme.customBoxDecoration(),
-                                child: playlist.imagePath != null &&
-                                        playlist.imagePath!.isNotEmpty &&
-                                        File(playlist.imagePath!).existsSync()
-                                    ? Image.file(File(playlist.imagePath!),
-                                        fit: BoxFit.cover)
-                                    : Icon(
-                                        Icons.queue_music_outlined,
-                                        color: Colors.white,
-                                        size: width * 0.08,
-                                      ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(width * 0.25,
-                                    height * 0.022, 0, height * 0.022),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          playlist.fileName,
-                                          style: CustomTheme.textTheme(context)
-                                              .bodyMedium,
-                                        ),
-                                        SizedBox(
-                                          height: height * 0.002,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                      children: playlists.map(
+                        (playlist) {
+                          return GestureDetector(
+                            onTap: () =>
+                                context.go('/playlist-detail/${playlist.id}'),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: width,
+                                  height: height * 0.115,
+                                  color: Colors.black,
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                                Container(
+                                  width: width * 0.22,
+                                  height: height * 0.1,
+                                  decoration: CustomTheme.customBoxDecoration(),
+                                  child: playlist.imagePath != null &&
+                                          playlist.imagePath!.isNotEmpty &&
+                                          File(playlist.imagePath!).existsSync()
+                                      ? Image.file(File(playlist.imagePath!),
+                                          fit: BoxFit.cover)
+                                      : Icon(
+                                          Icons.queue_music_outlined,
+                                          color: Colors.white,
+                                          size: width * 0.08,
+                                        ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(width * 0.25,
+                                      height * 0.022, 0, height * 0.022),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            playlist.fileName,
+                                            style:
+                                                CustomTheme.textTheme(context)
+                                                    .bodyMedium,
+                                          ),
+                                          SizedBox(
+                                            height: height * 0.002,
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            right: width * 0.065,
+                                            top: height * 0.0125),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  height: height * 0.3,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      ListTile(
+                                                        leading: Icon(Icons
+                                                            .music_note_sharp),
+                                                        title: Text(
+                                                          playlist.fileName
+                                                                      .length >
+                                                                  25
+                                                              ? '${playlist.fileName.substring(0, 25)}...'
+                                                              : playlist
+                                                                  .fileName,
+                                                          style: CustomTheme
+                                                                  .textTheme(
+                                                                      context)
+                                                              .bodyMedium,
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading:
+                                                            Icon(Icons.share),
+                                                        title: Text(
+                                                          'Paylaş',
+                                                          style: CustomTheme
+                                                                  .textTheme(
+                                                                      context)
+                                                              .bodyMedium,
+                                                        ),
+                                                        onTap: () {
+                                                          Share.share(
+                                                              'Check out this playlist: ${playlist.fileName}');
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading:
+                                                            Icon(Icons.delete),
+                                                        title: Text(
+                                                          'Sil',
+                                                          style: CustomTheme
+                                                                  .textTheme(
+                                                                      context)
+                                                              .bodyMedium,
+                                                        ),
+                                                        onTap: () async {
+                                                          Navigator.pop(
+                                                              context);
+                                                          final shouldDelete =
+                                                              await showDialog<
+                                                                  bool>(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return CupertinoAlertDialog(
+                                                                title: Text(
+                                                                    'Playlist\'i Sil'),
+                                                                content: Text(
+                                                                    'Bu playlist\'i silmek istediğinizden emin misiniz?'),
+                                                                actions: <Widget>[
+                                                                  CupertinoDialogAction(
+                                                                    isDefaultAction:
+                                                                        true,
+                                                                    child: Text(
+                                                                        'İptal'),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(false),
+                                                                  ),
+                                                                  CupertinoDialogAction(
+                                                                    isDestructiveAction:
+                                                                        true,
+                                                                    child: Text(
+                                                                        'Sil'),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(true),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+
+                                                          if (shouldDelete ==
+                                                              true) {
+                                                            await playlistNotifier
+                                                                .deletePlaylist(
+                                                                    playlist
+                                                                        .id);
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Image.asset(
+                                            'assets/icons/menu.png',
+                                            height: height * 0.024,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ).toList(),
                     ),
             ],
           ),

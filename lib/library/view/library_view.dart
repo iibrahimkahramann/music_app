@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -101,7 +102,7 @@ class LibraryView extends ConsumerWidget {
                               ),
                               GestureDetector(
                                 onTap: isPickingFile
-                                    ? null // Eğer zaten dosya seçiliyorsa tıklamayı devre dışı bırak
+                                    ? null
                                     : () async {
                                         await filePickerNotifier
                                             .pickMusicFile();
@@ -161,6 +162,8 @@ class LibraryView extends ConsumerWidget {
                                   padding: EdgeInsets.fromLTRB(width * 0.22,
                                       height * 0.022, 0, height * 0.022),
                                   child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
                                         crossAxisAlignment:
@@ -190,93 +193,151 @@ class LibraryView extends ConsumerWidget {
                                       SizedBox(
                                         width: width * 0.12,
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return Container(
-                                                height: height * 0.3,
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    ListTile(
-                                                      leading: Icon(Icons
-                                                          .music_note_sharp),
-                                                      title: Text(
-                                                        music.fileName.length >
-                                                                25
-                                                            ? '${music.fileName.substring(0, 25)}...'
-                                                            : music.fileName,
-                                                        style: CustomTheme
-                                                                .textTheme(
-                                                                    context)
-                                                            .bodyMedium,
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            right: width * 0.065,
+                                            top: height * 0.001),
+                                        child: Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Container(
+                                                      height: height * 0.3,
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                            leading: Icon(Icons
+                                                                .music_note_sharp),
+                                                            title: Text(
+                                                              music.fileName
+                                                                          .length >
+                                                                      25
+                                                                  ? '${music.fileName.substring(0, 25)}...'
+                                                                  : music
+                                                                      .fileName,
+                                                              style: CustomTheme
+                                                                      .textTheme(
+                                                                          context)
+                                                                  .bodyMedium,
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(Icons
+                                                                .format_list_bulleted_sharp),
+                                                            title: Text(
+                                                              'Çalma Listesine Ekle',
+                                                              style: CustomTheme
+                                                                      .textTheme(
+                                                                          context)
+                                                                  .bodyMedium,
+                                                            ),
+                                                            onTap: () {
+                                                              context.go(
+                                                                  '/playlist-add-music',
+                                                                  extra:
+                                                                      music.id);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(
+                                                                Icons.share),
+                                                            title: Text(
+                                                              'Paylaş',
+                                                              style: CustomTheme
+                                                                      .textTheme(
+                                                                          context)
+                                                                  .bodyMedium,
+                                                            ),
+                                                            onTap: () {
+                                                              Share.share(
+                                                                  'Check out this music: ${music.fileName}');
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(
+                                                                Icons.delete),
+                                                            title: Text(
+                                                              'Sil',
+                                                              style: CustomTheme
+                                                                      .textTheme(
+                                                                          context)
+                                                                  .bodyMedium,
+                                                            ),
+                                                            onTap: () async {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              final shouldDelete =
+                                                                  await showDialog<
+                                                                      bool>(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return CupertinoAlertDialog(
+                                                                    title: Text(
+                                                                        'Şarkıyı Sil'),
+                                                                    content: Text(
+                                                                        'Bu şarkıyı silmek istediğinizden emin misiniz?'),
+                                                                    actions: <Widget>[
+                                                                      CupertinoDialogAction(
+                                                                        isDefaultAction:
+                                                                            true,
+                                                                        child: Text(
+                                                                            'İptal'),
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.of(context).pop(false),
+                                                                      ),
+                                                                      CupertinoDialogAction(
+                                                                        isDestructiveAction:
+                                                                            true,
+                                                                        child: Text(
+                                                                            'Sil'),
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.of(context).pop(true),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+
+                                                              if (shouldDelete ==
+                                                                  true) {
+                                                                await ref.read(
+                                                                    deleteMusicFileProvider(
+                                                                        music
+                                                                            .id));
+                                                                ref.invalidate(
+                                                                    musicFilesProvider);
+                                                              }
+                                                            },
+                                                          ),
+                                                        ],
                                                       ),
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    ListTile(
-                                                      leading: Icon(Icons
-                                                          .format_list_bulleted_sharp),
-                                                      title: Text(
-                                                        'Çalma Listesine Ekle',
-                                                        style: CustomTheme
-                                                                .textTheme(
-                                                                    context)
-                                                            .bodyMedium,
-                                                      ),
-                                                      onTap: () {
-                                                        context.go(
-                                                            '/playlist-add-music',
-                                                            extra: music.id);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    ListTile(
-                                                      leading:
-                                                          Icon(Icons.share),
-                                                      title: Text(
-                                                        'Paylaş',
-                                                        style: CustomTheme
-                                                                .textTheme(
-                                                                    context)
-                                                            .bodyMedium,
-                                                      ),
-                                                      onTap: () {
-                                                        Share.share(
-                                                            'Check out this music: ${music.fileName}');
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    ListTile(
-                                                      leading:
-                                                          Icon(Icons.delete),
-                                                      title: Text(
-                                                        'Sil',
-                                                        style: CustomTheme
-                                                                .textTheme(
-                                                                    context)
-                                                            .bodyMedium,
-                                                      ),
-                                                      onTap: () async {
-                                                        await ref.read(
-                                                            deleteMusicFileProvider(
-                                                                music.id));
-                                                        ref.invalidate(
-                                                            musicFilesProvider);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Image.asset(
-                                          'assets/icons/menu.png',
-                                          height: height * 0.024,
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Image.asset(
+                                                'assets/icons/menu.png',
+                                                height: height * 0.024,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],

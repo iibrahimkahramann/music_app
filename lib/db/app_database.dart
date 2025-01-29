@@ -85,6 +85,23 @@ class AppDatabase extends _$AppDatabase {
     final result = await query.get();
     return result.map((row) => row.readTable(musicFiles)).toList();
   }
+
+  // Playlist'i sil
+  Future<int> deletePlaylist(int id) async {
+    // Önce playlist'e ait müzikleri sil
+    await (delete(playlistMusic)..where((tbl) => tbl.playlistId.equals(id)))
+        .go();
+    // Sonra playlist'i sil
+    return (delete(playlistFiles)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  // Playlist'ten müzik sil
+  Future<int> deleteMusicFromPlaylist(int playlistId, int musicId) async {
+    return (delete(playlistMusic)
+          ..where((tbl) =>
+              tbl.playlistId.equals(playlistId) & tbl.musicId.equals(musicId)))
+        .go();
+  }
 }
 
 // Veritabanı bağlantısını açan fonksiyon

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_app/config/theme/custom_theme.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -24,7 +25,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
           Container(
             height: 1,
-            color: Color.fromARGB(255, 17, 17, 17),
+            color: CustomTheme.secondaryColor,
           ),
         ],
       ),
