@@ -12,22 +12,27 @@ class PlaylistNotifier extends StateNotifier<List<PlaylistFile>> {
     state = playlists;
   }
 
-  // Yeni bir playlist ekle
-  Future<void> addPlaylist(String playlistName) async {
+  Future<void> addPlaylistWithImage(
+      String playlistName, String? imagePath) async {
     final id = await database.insertPlaylist(
       PlaylistFilesCompanion(
         fileName: Value(playlistName),
+        imagePath: Value(imagePath),
         createdAt: Value(DateTime.now()),
       ),
     );
     state = [
       ...state,
-      PlaylistFile(id: id, fileName: playlistName, createdAt: DateTime.now()),
+      PlaylistFile(
+        id: id,
+        fileName: playlistName,
+        imagePath: imagePath,
+        createdAt: DateTime.now(),
+      ),
     ];
   }
 }
 
-// Provider
 final databaseProvider = Provider((ref) => AppDatabase());
 final playlistProvider =
     StateNotifierProvider<PlaylistNotifier, List<PlaylistFile>>((ref) {

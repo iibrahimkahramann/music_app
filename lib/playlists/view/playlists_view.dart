@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -75,6 +77,16 @@ class PlaylistsView extends ConsumerWidget {
                                 width: width * 0.22,
                                 height: height * 0.1,
                                 decoration: CustomTheme.customBoxDecoration(),
+                                child: playlist.imagePath != null &&
+                                        playlist.imagePath!.isNotEmpty &&
+                                        File(playlist.imagePath!).existsSync()
+                                    ? Image.file(File(playlist.imagePath!),
+                                        fit: BoxFit.cover)
+                                    : Icon(
+                                        Icons.queue_music_outlined,
+                                        color: Colors.white,
+                                        size: width * 0.08,
+                                      ),
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(width * 0.25,

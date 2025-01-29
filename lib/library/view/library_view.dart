@@ -195,7 +195,7 @@ class LibraryView extends ConsumerWidget {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return Container(
-                                                height: height * 0.4,
+                                                height: height * 0.3,
                                                 child: Column(
                                                   children: <Widget>[
                                                     ListTile(
@@ -226,20 +226,9 @@ class LibraryView extends ConsumerWidget {
                                                             .bodyMedium,
                                                       ),
                                                       onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    ListTile(
-                                                      leading: Icon(
-                                                          Icons.heart_broken),
-                                                      title: Text(
-                                                        'Favorilere Ekle',
-                                                        style: CustomTheme
-                                                                .textTheme(
-                                                                    context)
-                                                            .bodyMedium,
-                                                      ),
-                                                      onTap: () {
+                                                        context.go(
+                                                            '/playlist-add-music',
+                                                            extra: music.id);
                                                         Navigator.pop(context);
                                                       },
                                                     ),
