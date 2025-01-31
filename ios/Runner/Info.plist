@@ -48,6 +48,10 @@
 	<key>NSDocumentsUsageDescription</key>
 	<string>Dosyalarınıza erişmek için izin gereklidir.</string>
 	<key>UIFileSharingEnabled</key>
-<true/>
+	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to play audio files</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

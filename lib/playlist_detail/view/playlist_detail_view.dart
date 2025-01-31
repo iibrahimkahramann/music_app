@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';

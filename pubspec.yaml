@@ -37,7 +37,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   easy_localization: ^3.0.7
   go_router: ^14.6.3
-  just_audio: ^0.9.43
+  just_audio: ^0.9.36
   drift: ^2.24.0
   drift_flutter: ^0.2.4
   file_picker: ^8.1.7
@@ -48,6 +48,7 @@ dependencies:
   build_config: ^1.1.2
   drift_dev: ^2.24.0
   shared_preferences: ^2.4.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

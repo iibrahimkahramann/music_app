@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/db/app_database.dart';
+import 'package:music_app/music_detail/provider/music_player_provider.dart';
 
-class MusicDetailView extends StatefulWidget {
+class MusicDetailView extends ConsumerWidget {
   final MusicFile musicFile;
 
   const MusicDetailView({
@@ -11,15 +13,31 @@ class MusicDetailView extends StatefulWidget {
     required this.musicFile,
   });
 
-  @override
-  State<MusicDetailView> createState() => _MusicDetailViewState();
-}
+  String _formatDuration(Duration? duration) {
+    if (duration == null) return '--:--';
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$twoDigitMinutes:$twoDigitSeconds';
+  }
 
-class _MusicDetailViewState extends State<MusicDetailView> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playerState = ref.watch(musicPlayerProvider(musicFile));
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
+    if (playerState.errorMessage != null) {
+      return Center(
+        child: Text(
+          playerState.errorMessage!,
+          style: CustomTheme.textTheme(context)
+              .bodyMedium
+              ?.copyWith(color: Colors.red),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: CustomTheme.backgroundColor,
@@ -74,21 +92,74 @@ class _MusicDetailViewState extends State<MusicDetailView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.musicFile.fileName,
+                    musicFile.fileName,
                     style: CustomTheme.textTheme(context).bodyMedium,
                   ),
                   SizedBox(
                     height: height * 0.01,
                   ),
                   Text(
-                    widget.musicFile.createdAt != null
-                        ? '${widget.musicFile.createdAt!.day}/${widget.musicFile.createdAt!.month}/${widget.musicFile.createdAt!.year}'
+                    musicFile.createdAt != null
+                        ? '${musicFile.createdAt!.day}/${musicFile.createdAt!.month}/${musicFile.createdAt!.year}'
                         : 'No date available',
                     style: CustomTheme.textTheme(context)
                         .bodyMedium
                         ?.copyWith(color: Colors.grey),
                   ),
                   SizedBox(height: height * 0.02),
+                  Slider(
+                    value: (playerState.position ?? Duration.zero)
+                        .inSeconds
+                        .toDouble(),
+                    min: 0,
+                    max: (playerState.duration ?? Duration.zero)
+                        .inSeconds
+                        .toDouble(),
+                    onChanged: (value) {
+                      ref
+                          .read(musicPlayerProvider(musicFile).notifier)
+                          .seek(Duration(seconds: value.toInt()));
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _formatDuration(playerState.position),
+                          style: CustomTheme.textTheme(context)
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey),
+                        ),
+                        Text(
+                          _formatDuration(playerState.duration),
+                          style: CustomTheme.textTheme(context)
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          playerState.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                          color: Colors.white,
+                          size: 48,
+                        ),
+                        onPressed: () {
+                          ref
+                              .read(musicPlayerProvider(musicFile).notifier)
+                              .togglePlay();
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             )
