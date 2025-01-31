@@ -67,8 +67,9 @@ class PlaylistsView extends ConsumerWidget {
                       children: playlists.map(
                         (playlist) {
                           return GestureDetector(
-                            onTap: () =>
-                                context.go('/playlist-detail/${playlist.id}'),
+                            onTap: () {
+                              context.go('/playlist-detail/${playlist.id}');
+                            },
                             child: Stack(
                               children: [
                                 Container(

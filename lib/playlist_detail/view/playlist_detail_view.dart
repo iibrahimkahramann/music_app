@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:music_app/services/navigation_service.dart';
 
 class PlaylistDetailView extends ConsumerStatefulWidget {
   final String? playlistId; // Parametre ekledik
@@ -202,136 +202,15 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () {
-                                                    showModalBottomSheet(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return Container(
-                                                          height: height * 0.3,
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              ListTile(
-                                                                leading: Icon(Icons
-                                                                    .music_note_sharp),
-                                                                title: Text(
-                                                                  music.fileName
-                                                                              .length >
-                                                                          25
-                                                                      ? '${music.fileName.substring(0, 25)}...'
-                                                                      : music
-                                                                          .fileName,
-                                                                  style: CustomTheme
-                                                                          .textTheme(
-                                                                              context)
-                                                                      .bodyMedium,
-                                                                ),
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                              ListTile(
-                                                                leading: Icon(Icons
-                                                                    .format_list_bulleted_sharp),
-                                                                title: Text(
-                                                                  'Çalma Listesine Ekle',
-                                                                  style: CustomTheme
-                                                                          .textTheme(
-                                                                              context)
-                                                                      .bodyMedium,
-                                                                ),
-                                                                onTap: () {
-                                                                  context.go(
-                                                                      '/playlist-add-music',
-                                                                      extra: music
-                                                                          .id);
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                              ListTile(
-                                                                leading: Icon(
-                                                                    Icons
-                                                                        .share),
-                                                                title: Text(
-                                                                  'Paylaş',
-                                                                  style: CustomTheme
-                                                                          .textTheme(
-                                                                              context)
-                                                                      .bodyMedium,
-                                                                ),
-                                                                onTap: () {
-                                                                  Share.share(
-                                                                      'Check out this music: ${music.fileName}');
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                              ListTile(
-                                                                leading: Icon(
-                                                                    Icons
-                                                                        .delete),
-                                                                title: Text(
-                                                                  'Sil',
-                                                                  style: CustomTheme
-                                                                          .textTheme(
-                                                                              context)
-                                                                      .bodyMedium,
-                                                                ),
-                                                                onTap:
-                                                                    () async {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  final shouldDelete =
-                                                                      await showDialog<
-                                                                          bool>(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            context) {
-                                                                      return CupertinoAlertDialog(
-                                                                        title: Text(
-                                                                            'Şarkıyı Çalma Listesinden Sil'),
-                                                                        content:
-                                                                            Text('Bu şarkıyı silmek istediğinizden emin misiniz?'),
-                                                                        actions: <Widget>[
-                                                                          CupertinoDialogAction(
-                                                                            isDefaultAction:
-                                                                                true,
-                                                                            child:
-                                                                                Text('İptal'),
-                                                                            onPressed: () =>
-                                                                                Navigator.of(context).pop(false),
-                                                                          ),
-                                                                          CupertinoDialogAction(
-                                                                            isDestructiveAction:
-                                                                                true,
-                                                                            child:
-                                                                                Text('Sil'),
-                                                                            onPressed: () =>
-                                                                                Navigator.of(context).pop(true),
-                                                                          ),
-                                                                        ],
-                                                                      );
-                                                                    },
-                                                                  );
-
-                                                                  if (shouldDelete ==
-                                                                      true) {
-                                                                    final playlistMusicNotifier =
-                                                                        ref.read(
-                                                                            playlistMusicProvider(widget.playlistId!).notifier);
-                                                                    await playlistMusicNotifier
-                                                                        .deleteMusicFromPlaylist(
-                                                                            music.id);
-                                                                  }
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
+                                                    final musicFiles = data.$2;
+                                                    final currentIndex =
+                                                        musicFiles
+                                                            .indexOf(music);
+                                                    NavigationService()
+                                                        .navigateToMusicDetail(
+                                                      music,
+                                                      musicFiles,
+                                                      currentIndex,
                                                     );
                                                   },
                                                   child: Image.asset(

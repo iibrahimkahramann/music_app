@@ -57,9 +57,19 @@ final router = GoRouter(
     GoRoute(
       path: '/music-detail',
       pageBuilder: (context, state) {
-        final musicFile = state.extra as MusicFile;
+        final Map<String, dynamic> params = state.extra as Map<String, dynamic>;
+        final musicFile = params['musicFile'] as MusicFile;
+        final onPrevious = params['onPrevious'] as VoidCallback?;
+        final onNext = params['onNext'] as VoidCallback?;
+
         return fadeScalePage(
-            child: MusicDetailView(musicFile: musicFile), state: state);
+          child: MusicDetailView(
+            musicFile: musicFile,
+            onPrevious: onPrevious,
+            onNext: onNext,
+          ),
+          state: state,
+        );
       },
     ),
     GoRoute(

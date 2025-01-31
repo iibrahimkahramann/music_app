@@ -9,6 +9,7 @@ import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:music_app/services/navigation_service.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -29,6 +30,7 @@ class LibraryView extends ConsumerWidget {
       appBar: CustomAppBar(),
       body: musicFilesAsyncValue.when(
         data: (musicFiles) {
+          NavigationService().setContext(context);
           return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -135,8 +137,14 @@ class LibraryView extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           final music = musicFiles[index];
                           return GestureDetector(
-                            onTap: () =>
-                                context.go('/music-detail', extra: music),
+                            onTap: () {
+                              final currentIndex = musicFiles.indexOf(music);
+                              NavigationService().navigateToMusicDetail(
+                                music,
+                                musicFiles,
+                                currentIndex,
+                              );
+                            },
                             child: Stack(
                               children: [
                                 Container(

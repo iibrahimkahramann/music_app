@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -9,16 +10,34 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
+  static AudioPlayer? _currentPlayer;
   final AudioPlayer _audioPlayer;
   final MusicFile musicFile;
+  bool _isInitialized = false;
 
-  MusicPlayerNotifier(this.musicFile)
-      : _audioPlayer = AudioPlayer(),
+  // Önceki ve sonraki şarkı için callback'ler
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
+  MusicPlayerNotifier(
+    this.musicFile, {
+    this.onPrevious,
+    this.onNext,
+  })  : _audioPlayer = AudioPlayer(),
         super(MusicPlayerState()) {
-    _init();
+    _initPlayer();
   }
 
-  Future<void> _init() async {
+  Future<void> _initPlayer() async {
+    if (_isInitialized) return;
+
+    // Önceki çalan müziği durdur
+    if (_currentPlayer != null && _currentPlayer != _audioPlayer) {
+      await _currentPlayer?.stop();
+      await _currentPlayer?.dispose();
+    }
+    _currentPlayer = _audioPlayer;
+
     try {
       if (Platform.isAndroid) {
         if (!await Permission.audio.request().isGranted) {
@@ -28,6 +47,7 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
         }
       }
       await _initAudioPlayer();
+      _isInitialized = true;
     } catch (e) {
       state = state.copyWith(errorMessage: 'Error initializing player: $e');
     }
@@ -44,7 +64,6 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
       print('File exists: ${await file.exists()}');
 
       if (!await file.exists()) {
-        // Dosya bulunamadıysa, uygulama dizininde arayalım
         final appDir = await getApplicationDocumentsDirectory();
         final musicDir = Directory('${appDir.path}/music');
         final fileName = path.basename(musicFile.filePath);
@@ -56,13 +75,15 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
         print('Alternative file exists: ${await alternativeFile.exists()}');
 
         if (await alternativeFile.exists()) {
-          // Veritabanını güncelle
-          await AppDatabase().update(AppDatabase().musicFiles).write(
-                MusicFilesCompanion(
-                  id: Value(musicFile.id),
-                  filePath: Value(alternativePath),
-                ),
-              );
+          // Veritabanını güncelle - sadece file_path'i güncelle
+          await (AppDatabase().update(AppDatabase().musicFiles)
+                ..where((tbl) => tbl.id.equals(musicFile.id)))
+              .write(
+            MusicFilesCompanion(
+              filePath: Value(alternativePath),
+            ),
+          );
+
           normalizedPath = alternativePath;
           file = File(normalizedPath);
           print('Veritabanı güncellendi, yeni yol: $alternativePath');
@@ -91,21 +112,10 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
       }
 
       // Müzik oynatıcıyı ayarla
-      await _audioPlayer.setFilePath(normalizedPath);
-      final duration = await _audioPlayer.duration;
-      state = state.copyWith(duration: duration);
-      print('Müzik oynatıcı hazır, süre: $duration');
+      await _audioPlayer.setAudioSource(AudioSource.file(normalizedPath));
 
       // Stream'leri dinle
-      _audioPlayer.positionStream.listen(
-        (position) => state = state.copyWith(position: position),
-        onError: (e) => print('Position stream error: $e'),
-      );
-
-      _audioPlayer.playerStateStream.listen(
-        (playerState) => state = state.copyWith(isPlaying: playerState.playing),
-        onError: (e) => print('Player state stream error: $e'),
-      );
+      _setupStreams();
     } catch (e, stackTrace) {
       print('Hata detayı:');
       print('Error: $e');
@@ -115,7 +125,29 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
     }
   }
 
-  Future<bool> _canReadFile(File file) async {
+  void _setupStreams() {
+    _audioPlayer.positionStream.listen(
+      (position) => state = state.copyWith(position: position),
+      onError: (e) => print('Position stream error: $e'),
+    );
+
+    _audioPlayer.playerStateStream.listen(
+      (playerState) => state = state.copyWith(isPlaying: playerState.playing),
+      onError: (e) => print('Player state stream error: $e'),
+    );
+
+    _audioPlayer.durationStream.listen(
+      (duration) {
+        if (duration != null) {
+          state = state.copyWith(duration: duration);
+          print('Duration güncellendi: $duration');
+        }
+      },
+      onError: (e) => print('Duration stream error: $e'),
+    );
+  }
+
+  Future<bool> canReadFile(File file) async {
     try {
       final randomAccess = await file.open(mode: FileMode.read);
       await randomAccess.close();
@@ -138,14 +170,51 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
     _audioPlayer.seek(position);
   }
 
+  void toggleLoop() {
+    final newLoopMode = state.isLooping ? LoopMode.off : LoopMode.one;
+    _audioPlayer.setLoopMode(newLoopMode);
+    state = state.copyWith(isLooping: !state.isLooping);
+  }
+
+  Future<void> setVolume(double volume) async {
+    await _audioPlayer.setVolume(volume);
+  }
+
+  // Önceki şarkıya geç
+  void previousTrack() {
+    onPrevious?.call();
+  }
+
+  // Sonraki şarkıya geç
+  void nextTrack() {
+    onNext?.call();
+  }
+
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    try {
+      if (_currentPlayer == _audioPlayer) {
+        _currentPlayer = null;
+      }
+      _audioPlayer.stop();
+      _audioPlayer.dispose();
+      _isInitialized = false;
+    } catch (e) {
+      print('Dispose error: $e');
+    }
     super.dispose();
   }
 }
 
-final musicPlayerProvider = StateNotifierProvider.family<MusicPlayerNotifier,
-    MusicPlayerState, MusicFile>((ref, musicFile) {
-  return MusicPlayerNotifier(musicFile);
-});
+final musicPlayerProvider = StateNotifierProvider.family<
+    MusicPlayerNotifier,
+    MusicPlayerState,
+    ({MusicFile musicFile, VoidCallback? onPrevious, VoidCallback? onNext})>(
+  (ref, params) {
+    return MusicPlayerNotifier(
+      params.musicFile,
+      onPrevious: params.onPrevious,
+      onNext: params.onNext,
+    );
+  },
+);

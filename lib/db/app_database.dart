@@ -102,6 +102,10 @@ class AppDatabase extends _$AppDatabase {
               tbl.playlistId.equals(playlistId) & tbl.musicId.equals(musicId)))
         .go();
   }
+
+  Future<MusicFile> getMusicFileById(int id) async {
+    return (select(musicFiles)..where((tbl) => tbl.id.equals(id))).getSingle();
+  }
 }
 
 // Veritabanı bağlantısını açan fonksiyon

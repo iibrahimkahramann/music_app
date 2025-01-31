@@ -1,16 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/music_detail/provider/music_player_provider.dart';
+import 'package:music_app/services/navigation_service.dart';
 
 class MusicDetailView extends ConsumerWidget {
   final MusicFile musicFile;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
 
   const MusicDetailView({
     super.key,
     required this.musicFile,
+    this.onPrevious,
+    this.onNext,
   });
 
   String _formatDuration(Duration? duration) {
@@ -23,7 +29,14 @@ class MusicDetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerState = ref.watch(musicPlayerProvider(musicFile));
+    NavigationService().setContext(context);
+    NavigationService().setContainer(ProviderContainer());
+
+    final playerState = ref.watch(musicPlayerProvider((
+      musicFile: musicFile,
+      onPrevious: onPrevious,
+      onNext: onNext,
+    )));
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -91,20 +104,26 @@ class MusicDetailView extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    musicFile.fileName,
-                    style: CustomTheme.textTheme(context).bodyMedium,
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.03),
+                    child: Text(
+                      musicFile.fileName,
+                      style: CustomTheme.textTheme(context).bodyMedium,
+                    ),
                   ),
                   SizedBox(
                     height: height * 0.01,
                   ),
-                  Text(
-                    musicFile.createdAt != null
-                        ? '${musicFile.createdAt!.day}/${musicFile.createdAt!.month}/${musicFile.createdAt!.year}'
-                        : 'No date available',
-                    style: CustomTheme.textTheme(context)
-                        .bodyMedium
-                        ?.copyWith(color: Colors.grey),
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.03),
+                    child: Text(
+                      musicFile.createdAt != null
+                          ? '${musicFile.createdAt!.day}/${musicFile.createdAt!.month}/${musicFile.createdAt!.year}'
+                          : 'No date available',
+                      style: CustomTheme.textTheme(context)
+                          .bodyMedium
+                          ?.copyWith(color: Colors.grey),
+                    ),
                   ),
                   SizedBox(height: height * 0.02),
                   Slider(
@@ -117,7 +136,11 @@ class MusicDetailView extends ConsumerWidget {
                         .toDouble(),
                     onChanged: (value) {
                       ref
-                          .read(musicPlayerProvider(musicFile).notifier)
+                          .read(musicPlayerProvider((
+                            musicFile: musicFile,
+                            onPrevious: onPrevious,
+                            onNext: onNext,
+                          )).notifier)
                           .seek(Duration(seconds: value.toInt()));
                     },
                   ),
@@ -146,16 +169,93 @@ class MusicDetailView extends ConsumerWidget {
                     children: [
                       IconButton(
                         icon: Icon(
+                          playerState.isLooping
+                              ? Icons.repeat_one
+                              : Icons.repeat,
+                          color: playerState.isLooping
+                              ? CustomTheme.accentColor
+                              : Colors.white,
+                          size: width * 0.07,
+                        ),
+                        onPressed: () {
+                          ref
+                              .read(musicPlayerProvider((
+                                musicFile: musicFile,
+                                onPrevious: onPrevious,
+                                onNext: onNext,
+                              )).notifier)
+                              .toggleLoop();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.skip_previous,
+                          color: Colors.white,
+                          size: width * 0.1,
+                        ),
+                        onPressed: onPrevious != null
+                            ? () {
+                                ref
+                                    .read(musicPlayerProvider((
+                                      musicFile: musicFile,
+                                      onPrevious: onPrevious,
+                                      onNext: onNext,
+                                    )).notifier)
+                                    .previousTrack();
+                              }
+                            : null,
+                      ),
+                      IconButton(
+                        icon: Icon(
                           playerState.isPlaying
                               ? Icons.pause
                               : Icons.play_arrow,
                           color: Colors.white,
-                          size: 48,
+                          size: width * 0.15,
                         ),
                         onPressed: () {
                           ref
-                              .read(musicPlayerProvider(musicFile).notifier)
+                              .read(musicPlayerProvider((
+                                musicFile: musicFile,
+                                onPrevious: onPrevious,
+                                onNext: onNext,
+                              )).notifier)
                               .togglePlay();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.skip_next,
+                          color: Colors.white,
+                          size: width * 0.1,
+                        ),
+                        onPressed: onNext != null
+                            ? () {
+                                ref
+                                    .read(musicPlayerProvider((
+                                      musicFile: musicFile,
+                                      onPrevious: onPrevious,
+                                      onNext: onNext,
+                                    )).notifier)
+                                    .nextTrack();
+                              }
+                            : null,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.volume_up,
+                          color: Colors.white,
+                          size: width * 0.07,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => VolumeControlDialog(
+                              musicFile: musicFile,
+                              onPrevious: onPrevious,
+                              onNext: onNext,
+                            ),
+                          );
                         },
                       ),
                     ],
@@ -166,6 +266,69 @@ class MusicDetailView extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class VolumeControlDialog extends ConsumerStatefulWidget {
+  final MusicFile musicFile;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
+  const VolumeControlDialog({
+    Key? key,
+    required this.musicFile,
+    this.onPrevious,
+    this.onNext,
+  }) : super(key: key);
+
+  @override
+  ConsumerState<VolumeControlDialog> createState() =>
+      _VolumeControlDialogState();
+}
+
+class _VolumeControlDialogState extends ConsumerState<VolumeControlDialog> {
+  double _volume = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoAlertDialog(
+      title: const Text('Ses Seviyesi'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CupertinoSlider(
+            value: _volume,
+            min: 0.0,
+            max: 1.0,
+            onChanged: (value) {
+              setState(() {
+                _volume = value;
+              });
+              ref
+                  .read(musicPlayerProvider((
+                    musicFile: widget.musicFile,
+                    onPrevious: widget.onPrevious,
+                    onNext: widget.onNext,
+                  )).notifier)
+                  .setVolume(value);
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(CupertinoIcons.volume_mute),
+              const Icon(CupertinoIcons.volume_up),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Kapat'),
+        ),
+      ],
     );
   }
 }
