@@ -91,11 +91,8 @@ class MusicDetailView extends ConsumerWidget {
                   width: 380,
                   height: 370,
                   decoration: CustomTheme.customBoxDecoration()
-                      .copyWith(color: CustomTheme.accentColor),
-                  child: Image.asset(
-                    'assets/icons/music_filter.png',
-                    color: Colors.white,
-                  ),
+                      .copyWith(color: CustomTheme.secondaryColor),
+                  child: Icon(Icons.music_note_rounded, size: width * 0.3),
                 ),
               ),
             ),
@@ -196,22 +193,30 @@ class MusicDetailView extends ConsumerWidget {
                         onPressed: onPrevious != null
                             ? () {
                                 ref
-                                    .read(musicPlayerProvider((
-                                      musicFile: musicFile,
-                                      onPrevious: onPrevious,
-                                      onNext: onNext,
-                                    )).notifier)
+                                    .read(musicPlayerProvider(
+                                      (
+                                        musicFile: musicFile,
+                                        onPrevious: onPrevious,
+                                        onNext: onNext,
+                                      ),
+                                    ).notifier)
                                     .previousTrack();
                               }
                             : null,
                       ),
                       IconButton(
-                        icon: Icon(
-                          playerState.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          color: Colors.white,
-                          size: width * 0.15,
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            color: CustomTheme.accentColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Icon(
+                            playerState.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            color: Colors.white,
+                            size: width * 0.15,
+                          ),
                         ),
                         onPressed: () {
                           ref

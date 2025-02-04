@@ -11,6 +11,7 @@ class MusicFiles extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get filePath => text()();
   TextColumn get fileName => text()();
+  BlobColumn get albumArt => blob().nullable()();
   DateTimeColumn get createdAt => dateTime().nullable()();
 }
 
@@ -44,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   // Tüm müzik dosyalarını al
   Future<List<MusicFile>> getAllMusicFiles() => select(musicFiles).get();

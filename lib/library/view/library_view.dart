@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
-import 'package:music_app/bar/appbar/app_bar.dart';
-import 'package:music_app/bar/navbar/nav_bar.dart';
-import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:music_app/services/navigation_service.dart';
+import 'package:music_app/config/theme/custom_theme.dart';
+import 'package:lottie/lottie.dart';
+import 'package:music_app/bar/appbar/app_bar.dart';
+import 'package:music_app/bar/navbar/nav_bar.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -136,6 +136,7 @@ class LibraryView extends ConsumerWidget {
                         itemCount: musicFiles.length,
                         itemBuilder: (context, index) {
                           final music = musicFiles[index];
+
                           return GestureDetector(
                             onTap: () {
                               final currentIndex = musicFiles.indexOf(music);
@@ -161,9 +162,10 @@ class LibraryView extends ConsumerWidget {
                                     width: width * 0.16,
                                     height: width * 0.16,
                                     decoration: BoxDecoration(
-                                      color: CustomTheme.accentColor,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
+                                    child: Icon(Icons.music_note_rounded,
+                                        size: width * 0.1),
                                   ),
                                 ),
                                 Padding(
@@ -223,8 +225,8 @@ class LibraryView extends ConsumerWidget {
                                                             title: Text(
                                                               music.fileName
                                                                           .length >
-                                                                      25
-                                                                  ? '${music.fileName.substring(0, 25)}...'
+                                                                      30
+                                                                  ? '${music.fileName.substring(0, 30)}...'
                                                                   : music
                                                                       .fileName,
                                                               style: CustomTheme
@@ -232,10 +234,6 @@ class LibraryView extends ConsumerWidget {
                                                                           context)
                                                                   .bodyMedium,
                                                             ),
-                                                            onTap: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
                                                           ),
                                                           ListTile(
                                                             leading: Icon(Icons
@@ -294,41 +292,50 @@ class LibraryView extends ConsumerWidget {
                                                                 builder:
                                                                     (BuildContext
                                                                         context) {
-                                                                  return CupertinoAlertDialog(
+                                                                  return AlertDialog(
                                                                     title: Text(
-                                                                        'Şarkıyı Sil'),
-                                                                    content: Text(
-                                                                        'Bu şarkıyı silmek istediğinizden emin misiniz?'),
+                                                                      'Silinsin mi?',
+                                                                    ),
+                                                                    content:
+                                                                        Text(
+                                                                      'Bu müzik dosyasını silmek istediğinize emin misiniz?',
+                                                                    ),
                                                                     actions: <Widget>[
-                                                                      CupertinoDialogAction(
-                                                                        isDefaultAction:
-                                                                            true,
-                                                                        child: Text(
-                                                                            'İptal'),
+                                                                      TextButton(
                                                                         onPressed:
-                                                                            () =>
-                                                                                Navigator.of(context).pop(false),
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context,
+                                                                              false);
+                                                                        },
+                                                                        child:
+                                                                            Text(
+                                                                          'Hayır',
+                                                                        ),
                                                                       ),
-                                                                      CupertinoDialogAction(
-                                                                        isDestructiveAction:
-                                                                            true,
-                                                                        child: Text(
-                                                                            'Sil'),
+                                                                      TextButton(
                                                                         onPressed:
-                                                                            () =>
-                                                                                Navigator.of(context).pop(true),
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context,
+                                                                              true);
+                                                                        },
+                                                                        child:
+                                                                            Text(
+                                                                          'Evet',
+                                                                        ),
                                                                       ),
                                                                     ],
                                                                   );
                                                                 },
                                                               );
 
-                                                              if (shouldDelete ==
-                                                                  true) {
-                                                                await ref.read(
-                                                                    deleteMusicFileProvider(
-                                                                        music
-                                                                            .id));
+                                                              if (shouldDelete ??
+                                                                  false) {
+                                                                await db
+                                                                    .deleteMusicFile(
+                                                                  music.id,
+                                                                );
                                                                 ref.invalidate(
                                                                     musicFilesProvider);
                                                               }
@@ -342,7 +349,7 @@ class LibraryView extends ConsumerWidget {
                                               },
                                               child: Image.asset(
                                                 'assets/icons/menu.png',
-                                                height: height * 0.024,
+                                                height: height * 0.02,
                                               ),
                                             ),
                                           ],
@@ -363,8 +370,12 @@ class LibraryView extends ConsumerWidget {
             ),
           );
         },
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Hata: $error')),
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stackTrace) => Center(
+          child: Text('Hata: $error'),
+        ),
       ),
       bottomNavigationBar: CustomNavBar(currentLocation: '/library'),
     );

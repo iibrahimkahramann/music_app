@@ -30,6 +30,12 @@ class $MusicFilesTable extends MusicFiles
   late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
       'file_name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _albumArtMeta =
+      const VerificationMeta('albumArt');
+  @override
+  late final GeneratedColumn<Uint8List> albumArt = GeneratedColumn<Uint8List>(
+      'album_art', aliasedName, true,
+      type: DriftSqlType.blob, requiredDuringInsert: false);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -37,7 +43,8 @@ class $MusicFilesTable extends MusicFiles
       'created_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns => [id, filePath, fileName, createdAt];
+  List<GeneratedColumn> get $columns =>
+      [id, filePath, fileName, albumArt, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -63,6 +70,10 @@ class $MusicFilesTable extends MusicFiles
     } else if (isInserting) {
       context.missing(_fileNameMeta);
     }
+    if (data.containsKey('album_art')) {
+      context.handle(_albumArtMeta,
+          albumArt.isAcceptableOrUnknown(data['album_art']!, _albumArtMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -82,6 +93,8 @@ class $MusicFilesTable extends MusicFiles
           .read(DriftSqlType.string, data['${effectivePrefix}file_path'])!,
       fileName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}file_name'])!,
+      albumArt: attachedDatabase.typeMapping
+          .read(DriftSqlType.blob, data['${effectivePrefix}album_art']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
@@ -97,11 +110,13 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
   final int id;
   final String filePath;
   final String fileName;
+  final Uint8List? albumArt;
   final DateTime? createdAt;
   const MusicFile(
       {required this.id,
       required this.filePath,
       required this.fileName,
+      this.albumArt,
       this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -109,6 +124,9 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
     map['id'] = Variable<int>(id);
     map['file_path'] = Variable<String>(filePath);
     map['file_name'] = Variable<String>(fileName);
+    if (!nullToAbsent || albumArt != null) {
+      map['album_art'] = Variable<Uint8List>(albumArt);
+    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -120,6 +138,9 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
       id: Value(id),
       filePath: Value(filePath),
       fileName: Value(fileName),
+      albumArt: albumArt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumArt),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -133,6 +154,7 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
       id: serializer.fromJson<int>(json['id']),
       filePath: serializer.fromJson<String>(json['filePath']),
       fileName: serializer.fromJson<String>(json['fileName']),
+      albumArt: serializer.fromJson<Uint8List?>(json['albumArt']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
@@ -143,6 +165,7 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
       'id': serializer.toJson<int>(id),
       'filePath': serializer.toJson<String>(filePath),
       'fileName': serializer.toJson<String>(fileName),
+      'albumArt': serializer.toJson<Uint8List?>(albumArt),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
@@ -151,11 +174,13 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
           {int? id,
           String? filePath,
           String? fileName,
+          Value<Uint8List?> albumArt = const Value.absent(),
           Value<DateTime?> createdAt = const Value.absent()}) =>
       MusicFile(
         id: id ?? this.id,
         filePath: filePath ?? this.filePath,
         fileName: fileName ?? this.fileName,
+        albumArt: albumArt.present ? albumArt.value : this.albumArt,
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   MusicFile copyWithCompanion(MusicFilesCompanion data) {
@@ -163,6 +188,7 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
       id: data.id.present ? data.id.value : this.id,
       filePath: data.filePath.present ? data.filePath.value : this.filePath,
       fileName: data.fileName.present ? data.fileName.value : this.fileName,
+      albumArt: data.albumArt.present ? data.albumArt.value : this.albumArt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -173,13 +199,15 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
           ..write('id: $id, ')
           ..write('filePath: $filePath, ')
           ..write('fileName: $fileName, ')
+          ..write('albumArt: $albumArt, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, filePath, fileName, createdAt);
+  int get hashCode => Object.hash(
+      id, filePath, fileName, $driftBlobEquality.hash(albumArt), createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -187,6 +215,7 @@ class MusicFile extends DataClass implements Insertable<MusicFile> {
           other.id == this.id &&
           other.filePath == this.filePath &&
           other.fileName == this.fileName &&
+          $driftBlobEquality.equals(other.albumArt, this.albumArt) &&
           other.createdAt == this.createdAt);
 }
 
@@ -194,17 +223,20 @@ class MusicFilesCompanion extends UpdateCompanion<MusicFile> {
   final Value<int> id;
   final Value<String> filePath;
   final Value<String> fileName;
+  final Value<Uint8List?> albumArt;
   final Value<DateTime?> createdAt;
   const MusicFilesCompanion({
     this.id = const Value.absent(),
     this.filePath = const Value.absent(),
     this.fileName = const Value.absent(),
+    this.albumArt = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   MusicFilesCompanion.insert({
     this.id = const Value.absent(),
     required String filePath,
     required String fileName,
+    this.albumArt = const Value.absent(),
     this.createdAt = const Value.absent(),
   })  : filePath = Value(filePath),
         fileName = Value(fileName);
@@ -212,12 +244,14 @@ class MusicFilesCompanion extends UpdateCompanion<MusicFile> {
     Expression<int>? id,
     Expression<String>? filePath,
     Expression<String>? fileName,
+    Expression<Uint8List>? albumArt,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (filePath != null) 'file_path': filePath,
       if (fileName != null) 'file_name': fileName,
+      if (albumArt != null) 'album_art': albumArt,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -226,11 +260,13 @@ class MusicFilesCompanion extends UpdateCompanion<MusicFile> {
       {Value<int>? id,
       Value<String>? filePath,
       Value<String>? fileName,
+      Value<Uint8List?>? albumArt,
       Value<DateTime?>? createdAt}) {
     return MusicFilesCompanion(
       id: id ?? this.id,
       filePath: filePath ?? this.filePath,
       fileName: fileName ?? this.fileName,
+      albumArt: albumArt ?? this.albumArt,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -247,6 +283,9 @@ class MusicFilesCompanion extends UpdateCompanion<MusicFile> {
     if (fileName.present) {
       map['file_name'] = Variable<String>(fileName.value);
     }
+    if (albumArt.present) {
+      map['album_art'] = Variable<Uint8List>(albumArt.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -259,6 +298,7 @@ class MusicFilesCompanion extends UpdateCompanion<MusicFile> {
           ..write('id: $id, ')
           ..write('filePath: $filePath, ')
           ..write('fileName: $fileName, ')
+          ..write('albumArt: $albumArt, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -771,12 +811,14 @@ typedef $$MusicFilesTableCreateCompanionBuilder = MusicFilesCompanion Function({
   Value<int> id,
   required String filePath,
   required String fileName,
+  Value<Uint8List?> albumArt,
   Value<DateTime?> createdAt,
 });
 typedef $$MusicFilesTableUpdateCompanionBuilder = MusicFilesCompanion Function({
   Value<int> id,
   Value<String> filePath,
   Value<String> fileName,
+  Value<Uint8List?> albumArt,
   Value<DateTime?> createdAt,
 });
 
@@ -817,6 +859,9 @@ class $$MusicFilesTableFilterComposer
 
   ColumnFilters<String> get fileName => $composableBuilder(
       column: $table.fileName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<Uint8List> get albumArt => $composableBuilder(
+      column: $table.albumArt, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -861,6 +906,9 @@ class $$MusicFilesTableOrderingComposer
   ColumnOrderings<String> get fileName => $composableBuilder(
       column: $table.fileName, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<Uint8List> get albumArt => $composableBuilder(
+      column: $table.albumArt, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 }
@@ -882,6 +930,9 @@ class $$MusicFilesTableAnnotationComposer
 
   GeneratedColumn<String> get fileName =>
       $composableBuilder(column: $table.fileName, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get albumArt =>
+      $composableBuilder(column: $table.albumArt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -934,24 +985,28 @@ class $$MusicFilesTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> filePath = const Value.absent(),
             Value<String> fileName = const Value.absent(),
+            Value<Uint8List?> albumArt = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               MusicFilesCompanion(
             id: id,
             filePath: filePath,
             fileName: fileName,
+            albumArt: albumArt,
             createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String filePath,
             required String fileName,
+            Value<Uint8List?> albumArt = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               MusicFilesCompanion.insert(
             id: id,
             filePath: filePath,
             fileName: fileName,
+            albumArt: albumArt,
             createdAt: createdAt,
           ),
           withReferenceMapper: (p0) => p0

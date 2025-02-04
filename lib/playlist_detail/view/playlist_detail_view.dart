@@ -1,15 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
-import 'package:music_app/services/navigation_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PlaylistDetailView extends ConsumerStatefulWidget {
-  final String? playlistId; // Parametre ekledik
+  final String? playlistId;
 
   const PlaylistDetailView({super.key, required this.playlistId});
 
@@ -143,88 +142,153 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                       )
                     : Column(
                         children: data.$2
-                            .map((music) => Stack(
-                                  children: [
-                                    Container(
-                                      width: width,
-                                      height: height * 0.1,
-                                      margin: EdgeInsets.only(
-                                          bottom: height * 0.015),
-                                      decoration:
-                                          CustomTheme.customBoxDecoration(),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(width * 0.03,
-                                          height * 0.013, 0, height * 0.013),
-                                      child: Container(
-                                        width: width * 0.16,
-                                        height: width * 0.16,
-                                        decoration: BoxDecoration(
-                                          color: CustomTheme.accentColor,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                            .map((music) => GestureDetector(
+                                  onTap: () {
+                                    context.go('/music-detail', extra: {
+                                      'musicFile': music,
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: width,
+                                        height: height * 0.1,
+                                        margin: EdgeInsets.only(
+                                            bottom: height * 0.015),
+                                        decoration:
+                                            CustomTheme.customBoxDecoration(),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            width * 0.03,
+                                            height * 0.013,
+                                            0,
+                                            height * 0.013),
+                                        child: Container(
+                                          width: width * 0.16,
+                                          height: width * 0.16,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Icon(Icons.music_note_rounded,
+                                              size: width * 0.1),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(width * 0.22,
-                                          height * 0.022, 0, height * 0.022),
-                                      child: Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                music.fileName.length > 25
-                                                    ? '${music.fileName.substring(0, 25)}...'
-                                                    : music.fileName,
-                                                style: CustomTheme.textTheme(
-                                                        context)
-                                                    .bodyMedium,
-                                              ),
-                                              SizedBox(height: height * 0.002),
-                                              Text(
-                                                music.createdAt?.toString() ??
-                                                    'No date',
-                                                style: CustomTheme.textTheme(
-                                                        context)
-                                                    .bodySmall,
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(width: width * 0.12),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: width * 0.065,
-                                                top: height * 0.001),
-                                            child: Row(
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            width * 0.22,
+                                            height * 0.022,
+                                            0,
+                                            height * 0.022),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    final musicFiles = data.$2;
-                                                    final currentIndex =
-                                                        musicFiles
-                                                            .indexOf(music);
-                                                    NavigationService()
-                                                        .navigateToMusicDetail(
-                                                      music,
-                                                      musicFiles,
-                                                      currentIndex,
-                                                    );
-                                                  },
-                                                  child: Image.asset(
-                                                    'assets/icons/menu.png',
-                                                    height: height * 0.024,
-                                                  ),
+                                                Text(
+                                                  music.fileName.length > 25
+                                                      ? '${music.fileName.substring(0, 25)}...'
+                                                      : music.fileName,
+                                                  style: CustomTheme.textTheme(
+                                                          context)
+                                                      .bodyMedium,
+                                                ),
+                                                SizedBox(
+                                                    height: height * 0.002),
+                                                Text(
+                                                  music.createdAt != null
+                                                      ? '${music.createdAt!.day}/${music.createdAt!.month}/${music.createdAt!.year}'
+                                                      : 'Tarih bilgisi yok',
+                                                  style: CustomTheme.textTheme(
+                                                          context)
+                                                      .bodySmall,
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(width: width * 0.12),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: width * 0.065,
+                                                  top: height * 0.001),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return Container(
+                                                            height:
+                                                                height * 0.3,
+                                                            child: Column(
+                                                              children: <Widget>[
+                                                                ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .music_note_sharp),
+                                                                  title: Text(
+                                                                    music.fileName.length >
+                                                                            30
+                                                                        ? '${music.fileName.substring(0, 30)}...'
+                                                                        : music
+                                                                            .fileName,
+                                                                    style: CustomTheme.textTheme(
+                                                                            context)
+                                                                        .bodyMedium,
+                                                                  ),
+                                                                ),
+                                                                ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .share),
+                                                                  title: Text(
+                                                                    'Paylaş',
+                                                                    style: CustomTheme.textTheme(
+                                                                            context)
+                                                                        .bodyMedium,
+                                                                  ),
+                                                                  onTap: () {
+                                                                    Share.share(
+                                                                        'Check out this music: ${music.fileName}');
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                                ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .delete),
+                                                                  title: Text(
+                                                                    'Sil',
+                                                                    style: CustomTheme.textTheme(
+                                                                            context)
+                                                                        .bodyMedium,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Image.asset(
+                                                      'assets/icons/menu.png',
+                                                      height: height * 0.02,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ))
                             .toList(),
                       ),

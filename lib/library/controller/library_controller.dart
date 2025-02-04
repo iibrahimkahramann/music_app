@@ -6,7 +6,6 @@ import 'package:music_app/db/app_database.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-// StateNotifier ile dosya seçme durumunu yönetin
 class FilePickerNotifier extends StateNotifier<bool> {
   FilePickerNotifier() : super(false);
 
@@ -22,59 +21,64 @@ class FilePickerNotifier extends StateNotifier<bool> {
         allowedExtensions: ['mp3', 'wav', 'm4a'],
       );
 
-      if (result != null) {
-        final originalFile = File(result.files.single.path!);
-        final fileName = result.files.single.name;
-
-        // Dosyayı kalıcı bir konuma kopyalayalım
-        final appDir = await getApplicationDocumentsDirectory();
-        final musicDir = Directory(path.join(appDir.path, 'music'));
-
-        // Müzik dizinini oluştur
-        if (!await musicDir.exists()) {
-          await musicDir.create(recursive: true);
-        }
-
-        // Hedef dosya yolunu oluştur
-        final newPath = path.join(musicDir.path, fileName);
-
-        // Eğer aynı isimde dosya varsa, üzerine yazma
-        if (await File(newPath).exists()) {
-          final baseName = path.basenameWithoutExtension(fileName);
-          final extension = path.extension(fileName);
-          var counter = 1;
-          var newFileName = fileName;
-
-          while (await File(path.join(musicDir.path, newFileName)).exists()) {
-            newFileName = '$baseName ($counter)$extension';
-            counter++;
-          }
-
-          final newPath = path.join(musicDir.path, newFileName);
-        }
-
-        // Dosyayı kopyala
-        final copiedFile = await originalFile.copy(newPath);
-        print('Dosya kopyalandı: ${copiedFile.path}');
-
-        // Veritabanına kaydet
-        await db.insertMusicFile(
-          MusicFilesCompanion(
-            filePath: Value(copiedFile.path),
-            fileName: Value(path.basename(copiedFile.path)),
-            createdAt: Value(DateTime.now()),
-          ),
-        );
-
-        print('Müzik dosyası kalıcı konuma kaydedildi: ${copiedFile.path}');
-      } else {
+      if (result == null) {
         print("Kullanıcı dosya seçimini iptal etti.");
+        return;
       }
+
+      final originalFile = File(result.files.single.path!);
+      final fileName = result.files.single.name;
+
+      // Dosyanın kaydedileceği klasörü al
+      final appDir = await getApplicationDocumentsDirectory();
+      final musicDir = Directory(path.join(appDir.path, 'music'));
+
+      if (!await musicDir.exists()) {
+        await musicDir.create(recursive: true);
+      }
+
+      // Aynı isimde dosya olup olmadığını kontrol et
+      var newPath = path.join(musicDir.path, fileName);
+      int counter = 1;
+      while (await File(newPath).exists()) {
+        final baseName = path.basenameWithoutExtension(fileName);
+        final extension = path.extension(fileName);
+        newPath = path.join(musicDir.path, '$baseName ($counter)$extension');
+        counter++;
+      }
+
+      // Dosyayı kopyala
+      final copiedFile = await originalFile.copy(newPath);
+      print('Dosya kopyalandı: ${copiedFile.path}');
+
+      // Veritabanına kaydet
+      await db.insertMusicFile(
+        MusicFilesCompanion(
+          filePath: Value(copiedFile.path),
+          fileName: Value(path.basename(copiedFile.path)),
+          createdAt: Value(DateTime.now()),
+        ),
+      );
+
+      await printAllMusicFiles();
+      print('Müzik dosyası kaydedildi: ${copiedFile.path}');
     } catch (e, stackTrace) {
       print('Hata: $e');
       print('Stack trace: $stackTrace');
     } finally {
       state = false;
+    }
+  }
+
+  Future<void> printAllMusicFiles() async {
+    final musicList = await db.getAllMusicFiles();
+    if (musicList.isEmpty) {
+      print("📂 Veritabanında kayıtlı müzik bulunamadı!");
+    } else {
+      for (var music in musicList) {
+        print(
+            "ID: ${music.id}, Dosya: ${music.fileName}, Kapak: ${music.albumArt != null ? '✅ Var' : '❌ Yok'}");
+      }
     }
   }
 }
