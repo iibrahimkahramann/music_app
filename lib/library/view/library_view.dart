@@ -180,8 +180,8 @@ class LibraryView extends ConsumerWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            music.fileName.length > 25
-                                                ? '${music.fileName.substring(0, 25)}...'
+                                            music.fileName.length > 23
+                                                ? '${music.fileName.substring(0, 23)}...'
                                                 : music.fileName,
                                             style:
                                                 CustomTheme.textTheme(context)
@@ -205,7 +205,7 @@ class LibraryView extends ConsumerWidget {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            right: width * 0.065,
+                                            right: width * 0.045,
                                             top: height * 0.001),
                                         child: Row(
                                           children: [
@@ -347,9 +347,10 @@ class LibraryView extends ConsumerWidget {
                                                   },
                                                 );
                                               },
-                                              child: Image.asset(
-                                                'assets/icons/menu.png',
-                                                height: height * 0.02,
+                                              child: Icon(
+                                                Icons.more_vert_rounded,
+                                                size: width * 0.07,
+                                                color: CustomTheme.regularColor,
                                               ),
                                             ),
                                           ],

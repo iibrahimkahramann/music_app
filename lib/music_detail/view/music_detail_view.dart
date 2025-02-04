@@ -172,7 +172,7 @@ class MusicDetailView extends ConsumerWidget {
                           color: playerState.isLooping
                               ? CustomTheme.accentColor
                               : Colors.white,
-                          size: width * 0.07,
+                          size: width * 0.09,
                         ),
                         onPressed: () {
                           ref
@@ -188,7 +188,7 @@ class MusicDetailView extends ConsumerWidget {
                         icon: Icon(
                           Icons.skip_previous,
                           color: Colors.white,
-                          size: width * 0.1,
+                          size: width * 0.13,
                         ),
                         onPressed: onPrevious != null
                             ? () {
@@ -215,7 +215,7 @@ class MusicDetailView extends ConsumerWidget {
                                 ? Icons.pause
                                 : Icons.play_arrow,
                             color: Colors.white,
-                            size: width * 0.15,
+                            size: width * 0.18,
                           ),
                         ),
                         onPressed: () {
@@ -232,7 +232,7 @@ class MusicDetailView extends ConsumerWidget {
                         icon: Icon(
                           Icons.skip_next,
                           color: Colors.white,
-                          size: width * 0.1,
+                          size: width * 0.13,
                         ),
                         onPressed: onNext != null
                             ? () {
@@ -250,7 +250,7 @@ class MusicDetailView extends ConsumerWidget {
                         icon: Icon(
                           Icons.volume_up,
                           color: Colors.white,
-                          size: width * 0.07,
+                          size: width * 0.08,
                         ),
                         onPressed: () {
                           showDialog(
@@ -281,11 +281,11 @@ class VolumeControlDialog extends ConsumerStatefulWidget {
   final VoidCallback? onNext;
 
   const VolumeControlDialog({
-    Key? key,
+    super.key,
     required this.musicFile,
     this.onPrevious,
     this.onNext,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<VolumeControlDialog> createState() =>
@@ -318,13 +318,6 @@ class _VolumeControlDialogState extends ConsumerState<VolumeControlDialog> {
                   )).notifier)
                   .setVolume(value);
             },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Icon(CupertinoIcons.volume_mute),
-              const Icon(CupertinoIcons.volume_up),
-            ],
           ),
         ],
       ),

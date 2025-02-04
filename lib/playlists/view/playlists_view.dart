@@ -123,7 +123,7 @@ class PlaylistsView extends ConsumerWidget {
                                             showModalBottomSheet(
                                               context: context,
                                               builder: (BuildContext context) {
-                                                return Container(
+                                                return SizedBox(
                                                   height: height * 0.3,
                                                   child: Column(
                                                     children: <Widget>[

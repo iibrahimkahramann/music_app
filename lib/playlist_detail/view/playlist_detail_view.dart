@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -190,8 +189,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  music.fileName.length > 25
-                                                      ? '${music.fileName.substring(0, 25)}...'
+                                                  music.fileName.length > 23
+                                                      ? '${music.fileName.substring(0, 23)}...'
                                                       : music.fileName,
                                                   style: CustomTheme.textTheme(
                                                           context)
@@ -212,7 +211,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                             SizedBox(width: width * 0.12),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  right: width * 0.065,
+                                                  right: width * 0.045,
                                                   top: height * 0.001),
                                               child: Row(
                                                 children: [
@@ -222,7 +221,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                         context: context,
                                                         builder: (BuildContext
                                                             context) {
-                                                          return Container(
+                                                          return SizedBox(
                                                             height:
                                                                 height * 0.3,
                                                             child: Column(
@@ -276,9 +275,11 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                         },
                                                       );
                                                     },
-                                                    child: Image.asset(
-                                                      'assets/icons/menu.png',
-                                                      height: height * 0.02,
+                                                    child: Icon(
+                                                      Icons.more_vert_rounded,
+                                                      size: width * 0.07,
+                                                      color: CustomTheme
+                                                          .regularColor,
                                                     ),
                                                   ),
                                                 ],
