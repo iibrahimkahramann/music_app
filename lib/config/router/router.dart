@@ -3,10 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/view/library_view.dart';
 import 'package:music_app/music_detail/view/music_detail_view.dart';
+import 'package:music_app/onboarding/view/onboarding_one_view.dart';
+import 'package:music_app/onboarding/view/onboarding_three_view.dart';
+import 'package:music_app/onboarding/view/onboarding_two_view.dart';
 import 'package:music_app/playlist_add_music/view/playlist_add_music_view.dart';
 import 'package:music_app/playlist_detail/view/playlist_detail_view.dart';
 import 'package:music_app/playlists/view/playlists_view.dart';
 import 'package:music_app/settings/view/settings_view.dart';
+
+import '../../splash/view/splash_view.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -29,8 +34,32 @@ Page<dynamic> fadeScalePage(
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/library',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(
+      path: '/splash',
+      name: 'splash',
+      pageBuilder: (context, state) =>
+          const NoTransitionPage(child: SplashScreen()),
+    ),
+    GoRoute(
+      path: '/onboarding-one',
+      name: 'onboarding-one',
+      pageBuilder: (context, state) =>
+          NoTransitionPage(child: OnboardingOneView()),
+    ),
+    GoRoute(
+      path: '/onboarding-two',
+      name: 'onboarding-two',
+      pageBuilder: (context, state) =>
+          NoTransitionPage(child: OnboardingTwoView()),
+    ),
+    GoRoute(
+      path: '/onboarding-three',
+      name: 'onboarding-three',
+      pageBuilder: (context, state) =>
+          NoTransitionPage(child: OnboardingThreeView()),
+    ),
     GoRoute(
       path: '/library',
       pageBuilder: (context, state) =>
