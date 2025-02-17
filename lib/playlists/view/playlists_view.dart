@@ -38,7 +38,7 @@ class PlaylistsView extends ConsumerWidget {
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: width * 0.65),
+                    padding: EdgeInsets.only(left: width * 0.61),
                     child: GestureDetector(
                       onTap: () =>
                           showAddPlaylistDialog(context, playlistNotifier),
@@ -116,7 +116,7 @@ class PlaylistsView extends ConsumerWidget {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            right: width * 0.065,
+                                            right: width * 0.074,
                                             top: height * 0.0125),
                                         child: GestureDetector(
                                           onTap: () {
@@ -142,10 +142,6 @@ class PlaylistsView extends ConsumerWidget {
                                                                       context)
                                                               .bodyMedium,
                                                         ),
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
                                                       ),
                                                       ListTile(
                                                         leading:

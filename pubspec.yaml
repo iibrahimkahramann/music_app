@@ -51,6 +51,8 @@ dependencies:
   permission_handler: ^11.3.1
   audio_service: ^0.18.16
   flutter_media_metadata: ^1.0.0+1
+  url_launcher: ^6.3.1
+  in_app_review: ^2.0.10
 
 
 dev_dependencies:

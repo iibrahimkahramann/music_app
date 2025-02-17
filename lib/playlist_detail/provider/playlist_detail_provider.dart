@@ -38,7 +38,7 @@ class PlaylistMusicNotifier extends StateNotifier<List<MusicFile>> {
     state = musicFiles;
   }
 
-  Future<void> deleteMusicFromPlaylist(int musicId) async {
+  Future<void> deleteMusicFromPlaylist(int playlistId, int musicId) async {
     await database.deleteMusicFromPlaylist(playlistId, musicId);
     state = state.where((music) => music.id != musicId).toList();
   }

@@ -44,14 +44,7 @@ class LibraryView extends ConsumerWidget {
                         style: CustomTheme.textTheme(context).bodyLarge,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: width * 0.56),
-                        child: Image.asset(
-                          'assets/icons/mix.png',
-                          height: height * 0.029,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: width * 0.05),
+                        padding: EdgeInsets.only(left: width * 0.62),
                         child: GestureDetector(
                           onTap: isPickingFile
                               ? null // Eğer zaten dosya seçiliyorsa tıklamayı devre dışı bırak
@@ -60,7 +53,7 @@ class LibraryView extends ConsumerWidget {
                                 },
                           child: Image.asset(
                             'assets/icons/add.png',
-                            height: height * 0.029,
+                            height: height * 0.035,
                           ),
                         ),
                       )

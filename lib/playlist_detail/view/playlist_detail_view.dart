@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_app/db/app_database.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -18,6 +19,7 @@ class PlaylistDetailView extends ConsumerStatefulWidget {
 class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
   @override
   Widget build(BuildContext context) {
+    final AppDatabase db = AppDatabase();
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -268,6 +270,62 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                             context)
                                                                         .bodyMedium,
                                                                   ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    final shouldDelete =
+                                                                        await showDialog<
+                                                                            bool>(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text(
+                                                                            'Silinsin mi?',
+                                                                          ),
+                                                                          content:
+                                                                              Text(
+                                                                            'Bu müzik dosyasını silmek istediğinize emin misiniz?',
+                                                                          ),
+                                                                          actions: <Widget>[
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.pop(context, false);
+                                                                              },
+                                                                              child: Text(
+                                                                                'Hayır',
+                                                                              ),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.pop(context, true);
+                                                                              },
+                                                                              child: Text(
+                                                                                'Evet',
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        );
+                                                                      },
+                                                                    );
+
+                                                                    if (shouldDelete ??
+                                                                        false) {
+                                                                      await db
+                                                                          .deleteMusicFromPlaylist(
+                                                                        int.parse(
+                                                                            widget.playlistId!),
+                                                                        music
+                                                                            .id,
+                                                                      );
+                                                                      ref.invalidate(
+                                                                          playlistMusicProvider);
+                                                                    }
+                                                                  },
                                                                 ),
                                                               ],
                                                             ),
