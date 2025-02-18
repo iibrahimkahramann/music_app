@@ -32,11 +32,7 @@ class MusicDetailView extends ConsumerWidget {
     NavigationService().setContext(context);
     NavigationService().setContainer(ProviderContainer());
 
-    final playerState = ref.watch(musicPlayerProvider((
-      musicFile: musicFile,
-      onPrevious: onPrevious,
-      onNext: onNext,
-    )));
+    final playerState = ref.watch(musicPlayerProvider((musicFile: musicFile)));
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -133,11 +129,8 @@ class MusicDetailView extends ConsumerWidget {
                         .toDouble(),
                     onChanged: (value) {
                       ref
-                          .read(musicPlayerProvider((
-                            musicFile: musicFile,
-                            onPrevious: onPrevious,
-                            onNext: onNext,
-                          )).notifier)
+                          .read(musicPlayerProvider((musicFile: musicFile))
+                              .notifier)
                           .seek(Duration(seconds: value.toInt()));
                     },
                   ),
@@ -176,11 +169,8 @@ class MusicDetailView extends ConsumerWidget {
                         ),
                         onPressed: () {
                           ref
-                              .read(musicPlayerProvider((
-                                musicFile: musicFile,
-                                onPrevious: onPrevious,
-                                onNext: onNext,
-                              )).notifier)
+                              .read(musicPlayerProvider((musicFile: musicFile))
+                                  .notifier)
                               .toggleLoop();
                         },
                       ),
@@ -192,15 +182,7 @@ class MusicDetailView extends ConsumerWidget {
                         ),
                         onPressed: onPrevious != null
                             ? () {
-                                ref
-                                    .read(musicPlayerProvider(
-                                      (
-                                        musicFile: musicFile,
-                                        onPrevious: onPrevious,
-                                        onNext: onNext,
-                                      ),
-                                    ).notifier)
-                                    .previousTrack();
+                                onPrevious!();
                               }
                             : null,
                       ),
@@ -220,11 +202,8 @@ class MusicDetailView extends ConsumerWidget {
                         ),
                         onPressed: () {
                           ref
-                              .read(musicPlayerProvider((
-                                musicFile: musicFile,
-                                onPrevious: onPrevious,
-                                onNext: onNext,
-                              )).notifier)
+                              .read(musicPlayerProvider((musicFile: musicFile))
+                                  .notifier)
                               .togglePlay();
                         },
                       ),
@@ -236,13 +215,7 @@ class MusicDetailView extends ConsumerWidget {
                         ),
                         onPressed: onNext != null
                             ? () {
-                                ref
-                                    .read(musicPlayerProvider((
-                                      musicFile: musicFile,
-                                      onPrevious: onPrevious,
-                                      onNext: onNext,
-                                    )).notifier)
-                                    .nextTrack();
+                                onNext!();
                               }
                             : null,
                       ),
@@ -311,11 +284,8 @@ class _VolumeControlDialogState extends ConsumerState<VolumeControlDialog> {
                 _volume = value;
               });
               ref
-                  .read(musicPlayerProvider((
-                    musicFile: widget.musicFile,
-                    onPrevious: widget.onPrevious,
-                    onNext: widget.onNext,
-                  )).notifier)
+                  .read(musicPlayerProvider((musicFile: widget.musicFile))
+                      .notifier)
                   .setVolume(value);
             },
           ),

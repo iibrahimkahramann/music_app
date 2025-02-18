@@ -206,15 +206,9 @@ class MusicPlayerNotifier extends StateNotifier<MusicPlayerState> {
   }
 }
 
-final musicPlayerProvider = StateNotifierProvider.family<
-    MusicPlayerNotifier,
-    MusicPlayerState,
-    ({MusicFile musicFile, VoidCallback? onPrevious, VoidCallback? onNext})>(
+final musicPlayerProvider = StateNotifierProvider.family<MusicPlayerNotifier,
+    MusicPlayerState, ({MusicFile musicFile})>(
   (ref, params) {
-    return MusicPlayerNotifier(
-      params.musicFile,
-      onPrevious: params.onPrevious,
-      onNext: params.onNext,
-    );
+    return MusicPlayerNotifier(params.musicFile);
   },
 );

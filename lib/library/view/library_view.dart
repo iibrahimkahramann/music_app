@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
+import 'package:music_app/library/provider/selected_music_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:music_app/services/navigation_service.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
+import 'package:music_app/music_bar/view/music_bar.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -47,7 +49,7 @@ class LibraryView extends ConsumerWidget {
                         padding: EdgeInsets.only(left: width * 0.62),
                         child: GestureDetector(
                           onTap: isPickingFile
-                              ? null // Eğer zaten dosya seçiliyorsa tıklamayı devre dışı bırak
+                              ? null
                               : () async {
                                   await filePickerNotifier.pickMusicFile();
                                 },
@@ -132,12 +134,8 @@ class LibraryView extends ConsumerWidget {
 
                           return GestureDetector(
                             onTap: () {
-                              final currentIndex = musicFiles.indexOf(music);
-                              NavigationService().navigateToMusicDetail(
-                                music,
-                                musicFiles,
-                                currentIndex,
-                              );
+                              ref.read(selectedMusicProvider.notifier).state =
+                                  music;
                             },
                             child: Stack(
                               children: [
