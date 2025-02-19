@@ -24,3 +24,11 @@ final deleteMusicFileProvider =
 
   ref.invalidate(musicFilesProvider);
 });
+
+final selectedMusicProviderIndex = StateProvider<int>((ref) => 0);
+
+final playlistProvider = Provider<List<MusicFile>>((ref) {
+  // Replace with your logic to get the playlist
+  final musicFiles = ref.watch(musicFilesProvider).asData?.value ?? [];
+  return musicFiles;
+});

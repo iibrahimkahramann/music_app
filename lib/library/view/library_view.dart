@@ -11,7 +11,6 @@ import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
-import 'package:music_app/music_bar/view/music_bar.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -46,16 +45,23 @@ class LibraryView extends ConsumerWidget {
                         style: CustomTheme.textTheme(context).bodyLarge,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: width * 0.62),
+                        padding: EdgeInsets.only(left: width * 0.56),
+                        child: Image.asset(
+                          'assets/icons/mix.png',
+                          height: height * 0.029,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: width * 0.05),
                         child: GestureDetector(
                           onTap: isPickingFile
-                              ? null
+                              ? null // Eğer zaten dosya seçiliyorsa tıklamayı devre dışı bırak
                               : () async {
                                   await filePickerNotifier.pickMusicFile();
                                 },
                           child: Image.asset(
                             'assets/icons/add.png',
-                            height: height * 0.035,
+                            height: height * 0.029,
                           ),
                         ),
                       )
@@ -133,6 +139,14 @@ class LibraryView extends ConsumerWidget {
                           final music = musicFiles[index];
 
                           return GestureDetector(
+                            // onTap: () {
+                            //   final currentIndex = musicFiles.indexOf(music);
+                            //   NavigationService().navigateToMusicDetail(
+                            //     music,
+                            //     musicFiles,
+                            //     currentIndex,
+                            //   );
+                            // },
                             onTap: () {
                               ref.read(selectedMusicProvider.notifier).state =
                                   music;
