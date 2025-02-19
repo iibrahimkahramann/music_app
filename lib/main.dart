@@ -5,7 +5,7 @@ import 'package:music_app/config/theme/custom_theme.dart';
 
 void main() {
   runApp(
-    const ProviderScope(
+    ProviderScope(
       child: MyApp(),
     ),
   );

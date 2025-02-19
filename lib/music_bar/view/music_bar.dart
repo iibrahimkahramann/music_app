@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/library/provider/selected_music_provider.dart';
 import 'package:music_app/library/provider/library_provider.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/music_detail/provider/music_player_provider.dart';
 import 'package:music_app/services/navigation_service.dart';
-import 'package:music_app/db/app_database.dart';
 
 class MusicBar extends ConsumerWidget {
   const MusicBar({super.key});
@@ -17,8 +15,7 @@ class MusicBar extends ConsumerWidget {
     final playlist = ref.watch(playlistProvider);
 
     if (selectedMusic == null) {
-      return SizedBox
-          .shrink(); // Return an empty widget if no music is selected
+      return SizedBox.shrink();
     }
 
     final playerState = ref.watch(musicPlayerProvider(
@@ -31,7 +28,6 @@ class MusicBar extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        // Use NavigationService to navigate to music detail
         NavigationService().setContext(context);
         NavigationService().navigateToMusicDetail(
           selectedMusic,
@@ -44,7 +40,7 @@ class MusicBar extends ConsumerWidget {
           Container(
             width: screenWidth,
             height: screenHeight * 0.1,
-            decoration: CustomTheme.customBoxDecoration(),
+            decoration: BoxDecoration(color: CustomTheme.accentColor),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(screenWidth * 0.03,
@@ -61,15 +57,15 @@ class MusicBar extends ConsumerWidget {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(screenWidth * 0.22,
-                screenHeight * 0.022, 0, screenHeight * 0.022),
+                screenHeight * 0.022, screenWidth * 0.05, screenHeight * 0.022),
             child: Row(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      selectedMusic.fileName.length > 23
-                          ? '${selectedMusic.fileName.substring(0, 23)}...'
+                      selectedMusic.fileName.length > 20
+                          ? '${selectedMusic.fileName.substring(0, 20)}...'
                           : selectedMusic.fileName,
                       style: CustomTheme.textTheme(context).bodyMedium,
                     ),
@@ -84,9 +80,8 @@ class MusicBar extends ConsumerWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: screenWidth * 0.1,
-                ),
+
+                Spacer(), // This will push the IconButton to the right
                 IconButton(
                   icon: Icon(
                     playerState.isPlaying ? Icons.pause : Icons.play_arrow,
