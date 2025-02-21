@@ -84,29 +84,25 @@ final router = GoRouter(
           fadeScalePage(child: const SettingsView(), state: state),
     ),
     GoRoute(
-      path: '/music-detail',
-      pageBuilder: (context, state) {
-        final Map<String, dynamic> params = state.extra as Map<String, dynamic>;
-        final musicFile = params['musicFile'] as MusicFile;
-        final onPrevious = params['onPrevious'] as VoidCallback?;
-        final onNext = params['onNext'] as VoidCallback?;
-
-        return fadeScalePage(
-          child: MusicDetailView(
-            musicFile: musicFile,
-            onPrevious: onPrevious,
-            onNext: onNext,
-          ),
-          state: state,
-        );
-      },
-    ),
-    GoRoute(
       path: '/playlist-add-music',
       builder: (context, state) {
         final musicId = state.extra as int?;
         final playlistId = state.uri.queryParameters['playlistId'];
         return PlaylistAddMusicView(musicId: musicId, playlistId: playlistId);
+      },
+    ),
+    GoRoute(
+      path: '/music-detail',
+      builder: (context, state) {
+        final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+        final MusicFile musicFile = data['musicFile'];
+        final VoidCallback? onPrevious = data['onPrevious'];
+        final VoidCallback? onNext = data['onNext'];
+        return MusicDetailView(
+          musicFile: musicFile,
+          onPrevious: onPrevious,
+          onNext: onNext,
+        );
       },
     ),
   ],

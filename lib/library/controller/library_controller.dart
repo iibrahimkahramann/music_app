@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FilePickerNotifier extends StateNotifier<bool> {
   FilePickerNotifier() : super(false);
@@ -60,6 +61,10 @@ class FilePickerNotifier extends StateNotifier<bool> {
         ),
       );
 
+      // SharedPreferences'a kaydet
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('lastMusicFilePath', copiedFile.path);
+
       await printAllMusicFiles();
       print('Müzik dosyası kaydedildi: ${copiedFile.path}');
     } catch (e, stackTrace) {
@@ -68,6 +73,24 @@ class FilePickerNotifier extends StateNotifier<bool> {
     } finally {
       state = false;
     }
+  }
+
+  Future<String?> getLastMusicFilePath() async {
+    final musicList = await db.getAllMusicFiles();
+    if (musicList.isNotEmpty) {
+      print('Veritabanından alınan dosya yolu: ${musicList.last.filePath}');
+      return musicList.last.filePath;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final filePath = prefs.getString('lastMusicFilePath');
+      print('SharedPreferences\'tan alınan dosya yolu: $filePath');
+      return filePath;
+    }
+  }
+
+  Future<String?> getAlternativeMusicFilePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('alternativeMusicFilePath');
   }
 
   Future<void> printAllMusicFiles() async {

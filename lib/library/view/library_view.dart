@@ -1,17 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
-import 'package:music_app/library/provider/selected_music_provider.dart';
-import 'package:music_app/music_detail/provider/music_player_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:music_app/services/navigation_service.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
+import 'package:music_app/music_player_provider.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -140,30 +138,19 @@ class LibraryView extends ConsumerWidget {
                           final music = musicFiles[index];
 
                           return GestureDetector(
-                            // onTap: () {
-                            //   final currentIndex = musicFiles.indexOf(music);
-                            //   NavigationService().navigateToMusicDetail(
-                            //     music,
-                            //     musicFiles,
-                            //     currentIndex,
-                            //   );
-                            // },
                             onTap: () {
-                              ref.read(selectedMusicProvider.notifier).state =
-                                  music;
                               ref
-                                  .read(selectedMusicProviderIndex.notifier)
-                                  .state = index;
-
-                              final playerNotifier =
-                                  ref.read(musicPlayerProvider(
-                                (
-                                  musicFile: music,
-                                  onNext: null,
-                                  onPrevious: null
-                                ),
-                              ).notifier);
-                              playerNotifier.togglePlay();
+                                  .read(selectedMusicFileProvider.notifier)
+                                  .state = music;
+                              ref
+                                  .read(musicPlayerProvider.notifier)
+                                  .play(music);
+                              final currentIndex = musicFiles.indexOf(music);
+                              NavigationService().navigateToMusicDetail(
+                                music,
+                                musicFiles,
+                                currentIndex,
+                              );
                             },
                             child: Stack(
                               children: [

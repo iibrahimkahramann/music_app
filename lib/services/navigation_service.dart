@@ -9,42 +9,46 @@ class NavigationService {
   NavigationService._internal();
 
   late BuildContext _context;
-  ProviderContainer? _container;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   void setContext(BuildContext context) {
     _context = context;
   }
 
-  void setContainer(ProviderContainer container) {
-    _container = container;
-  }
+  void setContainer(ProviderContainer container) {}
 
   void navigateToMusicDetail(
     MusicFile musicFile,
-    List<MusicFile> playlist,
+    List<MusicFile> musicFiles,
     int currentIndex,
   ) {
     if (!_context.mounted) return;
-
-    // Önceki müzik çaları dispose et
-    _container?.dispose();
 
     _context.go('/music-detail', extra: {
       'musicFile': musicFile,
       'onPrevious': currentIndex > 0
           ? () => navigateToMusicDetail(
-                playlist[currentIndex - 1],
-                playlist,
+                musicFiles[currentIndex - 1],
+                musicFiles,
                 currentIndex - 1,
               )
           : null,
-      'onNext': currentIndex < playlist.length - 1
+      'onNext': currentIndex < musicFiles.length - 1
           ? () => navigateToMusicDetail(
-                playlist[currentIndex + 1],
-                playlist,
+                musicFiles[currentIndex + 1],
+                musicFiles,
                 currentIndex + 1,
               )
           : null,
     });
+  }
+
+  Future<dynamic> navigateTo(String routeName, {Object? arguments}) {
+    return navigatorKey.currentState!
+        .pushNamed(routeName, arguments: arguments);
+  }
+
+  void goBack() {
+    return navigatorKey.currentState!.pop();
   }
 }

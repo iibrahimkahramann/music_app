@@ -5,10 +5,9 @@ import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
-import 'package:music_app/library/provider/selected_music_provider.dart';
-import 'package:music_app/music_bar/view/music_bar.dart';
-import 'package:music_app/music_detail/provider/music_player_provider.dart';
+import 'package:music_app/music_player_provider.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
+import 'package:music_app/services/navigation_service.dart';
 import 'package:share_plus/share_plus.dart';
 
 class PlaylistDetailView extends ConsumerStatefulWidget {
@@ -152,24 +151,22 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                             children: data.$2
                                 .map((music) => GestureDetector(
                                       onTap: () {
+                                        if (!mounted) return;
                                         ref
-                                            .read(
-                                                selectedMusicProvider.notifier)
+                                            .read(selectedMusicFileProvider
+                                                .notifier)
                                             .state = music;
                                         ref
-                                            .read(selectedMusicProviderIndex
-                                                .notifier)
-                                            .state = data.$2.indexOf(music);
-
-                                        final playerNotifier =
-                                            ref.read(musicPlayerProvider(
-                                          (
-                                            musicFile: music,
-                                            onNext: null,
-                                            onPrevious: null
-                                          ),
-                                        ).notifier);
-                                        playerNotifier.togglePlay();
+                                            .read(musicPlayerProvider.notifier)
+                                            .play(music);
+                                        final currentIndex =
+                                            data.$2.indexOf(music);
+                                        NavigationService()
+                                            .navigateToMusicDetail(
+                                          music,
+                                          data.$2,
+                                          currentIndex,
+                                        );
                                       },
                                       child: Stack(
                                         children: [
@@ -377,12 +374,6 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: const MusicBar(),
           ),
         ],
       ),

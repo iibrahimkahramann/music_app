@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:music_app/music_bar/view/music_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_app/library/provider/library_provider.dart';
 
 class CustomNavBar extends StatelessWidget {
   const CustomNavBar({
