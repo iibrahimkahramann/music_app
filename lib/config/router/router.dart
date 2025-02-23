@@ -94,14 +94,21 @@ final router = GoRouter(
     GoRoute(
       path: '/music-detail',
       builder: (context, state) {
-        final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+        final Map<String, dynamic>? data = state.extra as Map<String, dynamic>?;
+        if (data == null) {
+          return Scaffold(
+            body: Center(child: Text('Hata: Müzik dosyası bulunamadı')),
+          );
+        }
         final MusicFile musicFile = data['musicFile'];
-        final VoidCallback? onPrevious = data['onPrevious'];
-        final VoidCallback? onNext = data['onNext'];
+        final List<MusicFile> musicFiles = data['musicFiles'];
+        final int currentIndex = data['currentIndex'];
         return MusicDetailView(
           musicFile: musicFile,
-          onPrevious: onPrevious,
-          onNext: onNext,
+          musicFiles: musicFiles,
+          currentIndex: currentIndex,
+          onPrevious: data['onPrevious'] as VoidCallback?,
+          onNext: data['onNext'] as VoidCallback?,
         );
       },
     ),

@@ -136,22 +136,91 @@ class LibraryView extends ConsumerWidget {
                         itemCount: musicFiles.length,
                         itemBuilder: (context, index) {
                           final music = musicFiles[index];
-
                           return GestureDetector(
                             onTap: () {
                               ref
                                   .read(selectedMusicFileProvider.notifier)
                                   .state = music;
-                              ref
-                                  .read(musicPlayerProvider.notifier)
-                                  .play(music);
+                              final playerNotifier =
+                                  ref.read(musicPlayerProvider((
+                                musicFile: music,
+                                onPrevious: null,
+                                onNext: null,
+                              )).notifier);
+                              playerNotifier.togglePlay();
                               final currentIndex = musicFiles.indexOf(music);
-                              NavigationService().navigateToMusicDetail(
-                                music,
-                                musicFiles,
-                                currentIndex,
-                              );
+                              context.go('/music-detail', extra: {
+                                'musicFile': music,
+                                'musicFiles': musicFiles,
+                                'currentIndex': currentIndex,
+                                'onPrevious': currentIndex > 0
+                                    ? () {
+                                        print(
+                                            'Önceki şarkı callback ayarlandı');
+                                        context.go('/music-detail', extra: {
+                                          'musicFile':
+                                              musicFiles[currentIndex - 1],
+                                          'musicFiles': musicFiles,
+                                          'currentIndex': currentIndex - 1,
+                                        });
+                                      }
+                                    : null,
+                                'onNext': currentIndex < musicFiles.length - 1
+                                    ? () {
+                                        print(
+                                            'Sonraki şarkı callback ayarlandı');
+                                        context.go('/music-detail', extra: {
+                                          'musicFile':
+                                              musicFiles[currentIndex + 1],
+                                          'musicFiles': musicFiles,
+                                          'currentIndex': currentIndex + 1,
+                                        });
+                                      }
+                                    : null,
+                              });
                             },
+                            // onTap: () {
+                            //   ref
+                            //       .read(selectedMusicFileProvider.notifier)
+                            //       .state = music;
+                            //   final playerNotifier =
+                            //       ref.read(musicPlayerProvider((
+                            //     musicFile: music,
+                            //     onPrevious: null,
+                            //     onNext: null,
+                            //   )).notifier);
+                            //   playerNotifier.togglePlay();
+                            //   final currentIndex = musicFiles.indexOf(music);
+                            //   context.go('/music-detail', extra: {
+                            //     'musicFile': music,
+                            //     'musicFiles': musicFiles,
+                            //     'currentIndex': currentIndex,
+                            //     'onPrevious': currentIndex > 0
+                            //         ? () {
+                            //             print(
+                            //                 'Önceki şarkı callback ayarlandı');
+                            //             context.go('/music-detail', extra: {
+                            //               'musicFile':
+                            //                   musicFiles[currentIndex - 1],
+                            //               'musicFiles': musicFiles,
+                            //               'currentIndex': currentIndex - 1,
+                            //             });
+                            //           }
+                            //         : null,
+                            //     'onNext': currentIndex < musicFiles.length - 1
+                            //         ? () {
+                            //             print(
+                            //                 'Sonraki şarkı callback ayarlandı');
+                            //             context.go('/music-detail', extra: {
+                            //               'musicFile':
+                            //                   musicFiles[currentIndex + 1],
+                            //               'musicFiles': musicFiles,
+                            //               'currentIndex': currentIndex + 1,
+                            //             });
+                            //           }
+                            //         : null,
+                            //   });
+                            // },
                             child: Stack(
                               children: [
                                 Container(
@@ -300,12 +369,9 @@ class LibraryView extends ConsumerWidget {
                                                                         context) {
                                                                   return AlertDialog(
                                                                     title: Text(
-                                                                      'Silinsin mi?',
-                                                                    ),
-                                                                    content:
-                                                                        Text(
-                                                                      'Bu müzik dosyasını silmek istediğinize emin misiniz?',
-                                                                    ),
+                                                                        'Silinsin mi?'),
+                                                                    content: Text(
+                                                                        'Bu müzik dosyasını silmek istediğinize emin misiniz?'),
                                                                     actions: <Widget>[
                                                                       TextButton(
                                                                         onPressed:
@@ -314,10 +380,8 @@ class LibraryView extends ConsumerWidget {
                                                                               context,
                                                                               false);
                                                                         },
-                                                                        child:
-                                                                            Text(
-                                                                          'Hayır',
-                                                                        ),
+                                                                        child: Text(
+                                                                            'Hayır'),
                                                                       ),
                                                                       TextButton(
                                                                         onPressed:
@@ -326,10 +390,8 @@ class LibraryView extends ConsumerWidget {
                                                                               context,
                                                                               true);
                                                                         },
-                                                                        child:
-                                                                            Text(
-                                                                          'Evet',
-                                                                        ),
+                                                                        child: Text(
+                                                                            'Evet'),
                                                                       ),
                                                                     ],
                                                                   );
@@ -340,8 +402,8 @@ class LibraryView extends ConsumerWidget {
                                                                   false) {
                                                                 await db
                                                                     .deleteMusicFile(
-                                                                  music.id,
-                                                                );
+                                                                        music
+                                                                            .id);
                                                                 ref.invalidate(
                                                                     musicFilesProvider);
                                                               }

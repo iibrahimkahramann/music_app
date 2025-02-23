@@ -20,35 +20,18 @@ class NavigationService {
   void navigateToMusicDetail(
     MusicFile musicFile,
     List<MusicFile> musicFiles,
-    int currentIndex,
-  ) {
+    int currentIndex, {
+    VoidCallback? onPrevious,
+    VoidCallback? onNext,
+  }) {
     if (!_context.mounted) return;
 
     _context.go('/music-detail', extra: {
       'musicFile': musicFile,
-      'onPrevious': currentIndex > 0
-          ? () => navigateToMusicDetail(
-                musicFiles[currentIndex - 1],
-                musicFiles,
-                currentIndex - 1,
-              )
-          : null,
-      'onNext': currentIndex < musicFiles.length - 1
-          ? () => navigateToMusicDetail(
-                musicFiles[currentIndex + 1],
-                musicFiles,
-                currentIndex + 1,
-              )
-          : null,
+      'musicFiles': musicFiles,
+      'currentIndex': currentIndex,
+      'onPrevious': onPrevious,
+      'onNext': onNext,
     });
-  }
-
-  Future<dynamic> navigateTo(String routeName, {Object? arguments}) {
-    return navigatorKey.currentState!
-        .pushNamed(routeName, arguments: arguments);
-  }
-
-  void goBack() {
-    return navigatorKey.currentState!.pop();
   }
 }

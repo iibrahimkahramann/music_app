@@ -7,8 +7,9 @@ import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
 import 'package:music_app/music_player_provider.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
-import 'package:music_app/services/navigation_service.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../music_bar/view/music_bar.dart';
 
 class PlaylistDetailView extends ConsumerStatefulWidget {
   final String? playlistId;
@@ -77,8 +78,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                   children: [
                     Center(
                       child: Container(
-                        width: 220,
-                        height: 220,
+                        width: width * 0.5,
+                        height: width * 0.5,
                         decoration: CustomTheme.customBoxDecoration(),
                         child: data.$1.imagePath != null &&
                                 data.$1.imagePath!.isNotEmpty &&
@@ -88,7 +89,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                             : Icon(
                                 Icons.queue_music_outlined,
                                 color: Colors.white,
-                                size: width * 0.08,
+                                size: width * 0.09,
                               ),
                       ),
                     ),
@@ -151,22 +152,53 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                             children: data.$2
                                 .map((music) => GestureDetector(
                                       onTap: () {
-                                        if (!mounted) return;
                                         ref
                                             .read(selectedMusicFileProvider
                                                 .notifier)
                                             .state = music;
-                                        ref
-                                            .read(musicPlayerProvider.notifier)
-                                            .play(music);
+                                        final playerNotifier =
+                                            ref.read(musicPlayerProvider((
+                                          musicFile: music,
+                                          onPrevious: null,
+                                          onNext: null,
+                                        )).notifier);
+                                        playerNotifier.togglePlay();
                                         final currentIndex =
                                             data.$2.indexOf(music);
-                                        NavigationService()
-                                            .navigateToMusicDetail(
-                                          music,
-                                          data.$2,
-                                          currentIndex,
-                                        );
+                                        context.go('/music-detail', extra: {
+                                          'musicFile': music,
+                                          'musicFiles': data.$2,
+                                          'currentIndex': currentIndex,
+                                          'onPrevious': currentIndex > 0
+                                              ? () {
+                                                  print(
+                                                      'Önceki şarkı callback ayarlandı');
+                                                  context.go('/music-detail',
+                                                      extra: {
+                                                        'musicFile': data.$2[
+                                                            currentIndex - 1],
+                                                        'musicFiles': data.$2,
+                                                        'currentIndex':
+                                                            currentIndex - 1,
+                                                      });
+                                                }
+                                              : null,
+                                          'onNext': currentIndex <
+                                                  data.$2.length - 1
+                                              ? () {
+                                                  print(
+                                                      'Sonraki şarkı callback ayarlandı');
+                                                  context.go('/music-detail',
+                                                      extra: {
+                                                        'musicFile': data.$2[
+                                                            currentIndex + 1],
+                                                        'musicFiles': data.$2,
+                                                        'currentIndex':
+                                                            currentIndex + 1,
+                                                      });
+                                                }
+                                              : null,
+                                        });
                                       },
                                       child: Stack(
                                         children: [
@@ -374,6 +406,10 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                 ),
               ),
             ),
+          ),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: MusicBar(),
           ),
         ],
       ),
