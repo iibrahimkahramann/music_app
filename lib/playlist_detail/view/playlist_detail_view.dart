@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -45,7 +46,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Playlist Detail',
+                'Playlist Detail'.tr(),
                 style: CustomTheme.textTheme(context)
                     .bodyMedium
                     ?.copyWith(color: Colors.white),
@@ -100,7 +101,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                     ),
                     SizedBox(height: height * 0.001),
                     Text(
-                      '${data.$2.length} songs',
+                      '${data.$2.length} ${'Songs'.tr()}',
                       style: CustomTheme.textTheme(context).bodySmall,
                     ),
                     SizedBox(height: height * 0.02),
@@ -115,7 +116,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                         '/playlist-add-music?playlistId=${widget.playlistId}');
                                   },
                                   child: Container(
-                                    width: width * 0.4,
+                                    width: width * 0.5,
                                     height: height * 0.05,
                                     decoration: BoxDecoration(
                                       color: CustomTheme.accentColor,
@@ -123,7 +124,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        'Add Music',
+                                        'Add Music to Playlist'.tr(),
                                         style: CustomTheme.textTheme(context)
                                             .bodyMedium,
                                       ),
@@ -139,7 +140,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                       right: width * 0.2,
                                       top: height * 0.0),
                                   child: Text(
-                                    'No Music Yet. Add Music by Pressing the Add Music Button',
+                                    'No Music Yet. Add Music by Pressing the Add Music Button'
+                                        .tr(),
                                     style: CustomTheme.textTheme(context)
                                         .bodySmall,
                                     textAlign: TextAlign.center,
@@ -304,7 +306,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                               .share),
                                                                       title:
                                                                           Text(
-                                                                        'Paylaş',
+                                                                        'Share'
+                                                                            .tr(),
                                                                         style: CustomTheme.textTheme(context)
                                                                             .bodyMedium,
                                                                       ),
@@ -322,7 +325,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                               .delete),
                                                                       title:
                                                                           Text(
-                                                                        'Sil',
+                                                                        'Delete'
+                                                                            .tr(),
                                                                         style: CustomTheme.textTheme(context)
                                                                             .bodyMedium,
                                                                       ),
@@ -338,10 +342,10 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                               (BuildContext context) {
                                                                             return AlertDialog(
                                                                               title: Text(
-                                                                                'Silinsin mi?',
+                                                                                'Delete Music File'.tr(),
                                                                               ),
                                                                               content: Text(
-                                                                                'Bu müzik dosyasını silmek istediğinize emin misiniz?',
+                                                                                'Are you sure you want to delete this music file?'.tr(),
                                                                               ),
                                                                               actions: <Widget>[
                                                                                 TextButton(
@@ -349,7 +353,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                                     Navigator.pop(context, false);
                                                                                   },
                                                                                   child: Text(
-                                                                                    'Hayır',
+                                                                                    'No'.tr(),
                                                                                   ),
                                                                                 ),
                                                                                 TextButton(
@@ -357,7 +361,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                                     Navigator.pop(context, true);
                                                                                   },
                                                                                   child: Text(
-                                                                                    'Evet',
+                                                                                    'Yes'.tr(),
                                                                                   ),
                                                                                 ),
                                                                               ],

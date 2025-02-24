@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,11 +36,11 @@ class PlaylistsView extends ConsumerWidget {
               Row(
                 children: [
                   Text(
-                    'Playlist',
+                    'Playlists'.tr(),
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: width * 0.66),
+                    padding: EdgeInsets.only(left: width * 0.626),
                     child: GestureDetector(
                       onTap: () =>
                           showAddPlaylistDialog(context, playlistNotifier),
@@ -63,11 +64,12 @@ class PlaylistsView extends ConsumerWidget {
                               width: width * 0.6),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: width * 0.2,
-                                right: width * 0.2,
+                                left: width * 0.15,
+                                right: width * 0.15,
                                 top: height * 0.0),
                             child: Text(
-                              'No Music Yet. Add Music by Pressing the Add Music Button',
+                              'No Playlists Yet. Add Playlists by Pressing the Add Playlists Button'
+                                  .tr(),
                               style: CustomTheme.textTheme(context).bodySmall,
                               textAlign: TextAlign.center,
                             ),
@@ -87,7 +89,7 @@ class PlaylistsView extends ConsumerWidget {
                               ),
                               child: Center(
                                   child: Text(
-                                'Add Music',
+                                'Add Playlists'.tr(),
                                 style:
                                     CustomTheme.textTheme(context).bodyMedium,
                               )),
@@ -180,7 +182,7 @@ class PlaylistsView extends ConsumerWidget {
                                                         leading:
                                                             Icon(Icons.share),
                                                         title: Text(
-                                                          'Paylaş',
+                                                          'Share'.tr(),
                                                           style: CustomTheme
                                                                   .textTheme(
                                                                       context)
@@ -197,7 +199,7 @@ class PlaylistsView extends ConsumerWidget {
                                                         leading:
                                                             Icon(Icons.delete),
                                                         title: Text(
-                                                          'Sil',
+                                                          'Delete'.tr(),
                                                           style: CustomTheme
                                                                   .textTheme(
                                                                       context)
@@ -215,15 +217,17 @@ class PlaylistsView extends ConsumerWidget {
                                                                     context) {
                                                               return CupertinoAlertDialog(
                                                                 title: Text(
-                                                                    'Playlist\'i Sil'),
+                                                                    'Delete Playlist'
+                                                                        .tr()),
                                                                 content: Text(
-                                                                    'Bu playlist\'i silmek istediğinizden emin misiniz?'),
+                                                                    'Are you sure you want to delete this playlist?'),
                                                                 actions: <Widget>[
                                                                   CupertinoDialogAction(
                                                                     isDefaultAction:
                                                                         true,
                                                                     child: Text(
-                                                                        'İptal'),
+                                                                        'Cancel'
+                                                                            .tr()),
                                                                     onPressed: () =>
                                                                         Navigator.of(context)
                                                                             .pop(false),
@@ -232,7 +236,8 @@ class PlaylistsView extends ConsumerWidget {
                                                                     isDestructiveAction:
                                                                         true,
                                                                     child: Text(
-                                                                        'Sil'),
+                                                                        'Delete'
+                                                                            .tr()),
                                                                     onPressed: () =>
                                                                         Navigator.of(context)
                                                                             .pop(true),

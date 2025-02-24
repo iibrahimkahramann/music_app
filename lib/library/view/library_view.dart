@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -40,7 +41,7 @@ class LibraryView extends ConsumerWidget {
                   Row(
                     children: [
                       Text(
-                        'Library',
+                        'Library'.tr(),
                         style: CustomTheme.textTheme(context).bodyLarge,
                       ),
                       Padding(
@@ -86,7 +87,8 @@ class LibraryView extends ConsumerWidget {
                                     right: width * 0.2,
                                     top: height * 0.0),
                                 child: Text(
-                                  'No Music Yet. Add Music by Pressing the Add Music Button',
+                                  'No Music Yet. Add Music by Pressing the Add Music Button'
+                                      .tr(),
                                   style:
                                       CustomTheme.textTheme(context).bodySmall,
                                   textAlign: TextAlign.center,
@@ -111,7 +113,7 @@ class LibraryView extends ConsumerWidget {
                                   ),
                                   child: Center(
                                       child: Text(
-                                    'Add Music',
+                                    'Add Music'.tr(),
                                     style: CustomTheme.textTheme(context)
                                         .bodyMedium,
                                   )),
@@ -307,7 +309,8 @@ class LibraryView extends ConsumerWidget {
                                                             leading: Icon(Icons
                                                                 .format_list_bulleted_sharp),
                                                             title: Text(
-                                                              'Çalma Listesine Ekle',
+                                                              'Add to Playlist'
+                                                                  .tr(),
                                                               style: CustomTheme
                                                                       .textTheme(
                                                                           context)
@@ -326,7 +329,7 @@ class LibraryView extends ConsumerWidget {
                                                             leading: Icon(
                                                                 Icons.share),
                                                             title: Text(
-                                                              'Paylaş',
+                                                              'Share'.tr(),
                                                               style: CustomTheme
                                                                       .textTheme(
                                                                           context)
@@ -343,7 +346,7 @@ class LibraryView extends ConsumerWidget {
                                                             leading: Icon(
                                                                 Icons.delete),
                                                             title: Text(
-                                                              'Sil',
+                                                              'Delete'.tr(),
                                                               style: CustomTheme
                                                                       .textTheme(
                                                                           context)
@@ -362,9 +365,10 @@ class LibraryView extends ConsumerWidget {
                                                                         context) {
                                                                   return AlertDialog(
                                                                     title: Text(
-                                                                        'Silinsin mi?'),
+                                                                        'Delete'
+                                                                            .tr()),
                                                                     content: Text(
-                                                                        'Bu müzik dosyasını silmek istediğinize emin misiniz?'),
+                                                                        'Are you sure you want to delete this music file?'),
                                                                     actions: <Widget>[
                                                                       TextButton(
                                                                         onPressed:
@@ -374,7 +378,7 @@ class LibraryView extends ConsumerWidget {
                                                                               false);
                                                                         },
                                                                         child: Text(
-                                                                            'Hayır'),
+                                                                            'No'.tr()),
                                                                       ),
                                                                       TextButton(
                                                                         onPressed:
@@ -384,7 +388,7 @@ class LibraryView extends ConsumerWidget {
                                                                               true);
                                                                         },
                                                                         child: Text(
-                                                                            'Evet'),
+                                                                            'Yes'.tr()),
                                                                       ),
                                                                     ],
                                                                   );

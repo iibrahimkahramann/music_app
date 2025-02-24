@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -71,7 +72,7 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Select',
+                'Select'.tr(),
                 style: CustomTheme.textTheme(context)
                     .bodyMedium
                     ?.copyWith(color: Colors.white),
@@ -144,7 +145,7 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    'Müzik çalma listesine eklendi',
+                                    'Music added to playlist'.tr(),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   backgroundColor: CustomTheme.accentColor,
@@ -166,7 +167,8 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
           : playlists.isEmpty
               ? Center(
                   child: Text(
-                    'Henüz çalma listesi yok',
+                    'No Playlists Yet. Add Playlists by Pressing the Add Playlists Button'
+                        .tr(),
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                 )
@@ -222,7 +224,7 @@ class _PlaylistAddMusicViewState extends ConsumerState<PlaylistAddMusicView> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  'Müzik çalma listesine eklendi',
+                                  'Music added to playlist'.tr(),
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 backgroundColor: CustomTheme.accentColor,

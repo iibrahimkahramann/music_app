@@ -1,4 +1,5 @@
 import 'package:adapty_flutter/adapty_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -27,7 +28,7 @@ class SettingsView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Settings',
+                'Settings'.tr(),
                 style: CustomTheme.textTheme(context).bodyLarge,
               ),
               SizedBox(
@@ -75,12 +76,12 @@ class SettingsView extends ConsumerWidget {
                       children: [
                         Lottie.asset('assets/json/pro_background.json',
                             width: width * 0.60, height: height * 0.08),
-                        Text('Upgrade to Premium',
+                        Text('Upgrade to Premium'.tr(),
                             style: CustomTheme.textTheme(context).bodyLarge),
                         SizedBox(
                           height: height * 0.01,
                         ),
-                        Text('Join us to benefit from privileges',
+                        Text('Join us to benefit from privileges'.tr(),
                             style: CustomTheme.textTheme(context).bodyMedium),
                       ],
                     ),
@@ -115,7 +116,7 @@ class SettingsView extends ConsumerWidget {
                         width: width * 0.02,
                       ),
                       Text(
-                        'Terms Of Use',
+                        'Terms Of Use'.tr(),
                         style: CustomTheme.textTheme(context).bodyMedium,
                       ),
                     ],
@@ -150,7 +151,7 @@ class SettingsView extends ConsumerWidget {
                         width: width * 0.02,
                       ),
                       Text(
-                        'Privacy Policy',
+                        'Privacy Policy'.tr(),
                         style: CustomTheme.textTheme(context).bodyMedium,
                       ),
                     ],
@@ -184,7 +185,7 @@ class SettingsView extends ConsumerWidget {
                         width: width * 0.02,
                       ),
                       Text(
-                        'Rate Us',
+                        'Rate Us'.tr(),
                         style: CustomTheme.textTheme(context).bodyMedium,
                       ),
                     ],
