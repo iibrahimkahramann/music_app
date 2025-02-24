@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -38,13 +39,13 @@ class PlaylistsView extends ConsumerWidget {
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: width * 0.61),
+                    padding: EdgeInsets.only(left: width * 0.66),
                     child: GestureDetector(
                       onTap: () =>
                           showAddPlaylistDialog(context, playlistNotifier),
                       child: Image.asset(
                         'assets/icons/add.png',
-                        height: height * 0.035,
+                        height: height * 0.029,
                       ),
                     ),
                   ),
@@ -55,12 +56,44 @@ class PlaylistsView extends ConsumerWidget {
               ),
               playlists.isEmpty
                   ? Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: height * 0.3),
-                        child: Text(
-                          'Boş',
-                          style: CustomTheme.textTheme(context).bodyLarge,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Lottie.asset('assets/json/not_music.json',
+                              width: width * 0.6),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: width * 0.2,
+                                right: width * 0.2,
+                                top: height * 0.0),
+                            child: Text(
+                              'No Music Yet. Add Music by Pressing the Add Music Button',
+                              style: CustomTheme.textTheme(context).bodySmall,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * 0.03,
+                          ),
+                          GestureDetector(
+                            onTap: () => showAddPlaylistDialog(
+                                context, playlistNotifier),
+                            child: Container(
+                              width: width * 0.4,
+                              height: height * 0.05,
+                              decoration: BoxDecoration(
+                                color: CustomTheme.accentColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                'Add Music',
+                                style:
+                                    CustomTheme.textTheme(context).bodyMedium,
+                              )),
+                            ),
+                          )
+                        ],
                       ),
                     )
                   : Column(

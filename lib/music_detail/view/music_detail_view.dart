@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
-import 'package:music_app/music_player_provider.dart';
+import 'package:music_app/config/providers/music_player_provider.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:share_plus/share_plus.dart';
 

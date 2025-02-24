@@ -5,7 +5,7 @@ import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/db/app_database.dart';
 import 'package:music_app/library/provider/library_provider.dart';
-import 'package:music_app/music_player_provider.dart';
+import 'package:music_app/config/providers/music_player_provider.dart';
 import 'package:music_app/playlist_detail/provider/playlist_detail_provider.dart';
 import 'package:share_plus/share_plus.dart';
 

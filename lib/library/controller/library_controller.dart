@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:adapty_flutter/adapty_flutter.dart';
 import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,5 +104,23 @@ class FilePickerNotifier extends StateNotifier<bool> {
             "ID: ${music.id}, Dosya: ${music.fileName}, Kapak: ${music.albumArt != null ? '✅ Var' : '❌ Yok'}");
       }
     }
+  }
+}
+
+Future<void> homePaywall() async {
+  try {
+    final paywall = await Adapty().getPaywall(
+      placementId: 'placement-onboarding',
+      locale: 'en',
+    );
+
+    final view = await AdaptyUI().createPaywallView(
+      paywall: paywall,
+    );
+    await view.present();
+  } on AdaptyError catch (e) {
+    print("Adapty hatası: $e");
+  } catch (e) {
+    print("Beklenmeyen hata: $e");
   }
 }

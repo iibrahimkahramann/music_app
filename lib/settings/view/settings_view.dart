@@ -1,16 +1,20 @@
+import 'package:adapty_flutter/adapty_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
+import 'package:music_app/config/providers/premium_providers.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
+import 'package:music_app/firebase/firebase_analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsView extends StatelessWidget {
+class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -31,28 +35,30 @@ class SettingsView extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () async {
-                  // final profile = await Adapty().getProfile();
-                  // final isPremium =
-                  //     profile.accessLevels['premium']?.isActive ?? false;
+                  final profile = await Adapty().getProfile();
+                  final isPremium =
+                      profile.accessLevels['premium']?.isActive ?? false;
 
-                  // ref
-                  //     .read(isPremiumProvider.notifier)
-                  //     .updatePremiumStatus(isPremium);
+                  ref
+                      .read(isPremiumProvider.notifier)
+                      .updatePremiumStatus(isPremium);
 
-                  // if (isPremium) {
-                  //   print("Kullanıcı premium, paywall gösterilmeyecek");
-                  //   return;
-                  // }
+                  if (isPremium) {
+                    print("Kullanıcı premium, paywall gösterilmeyecek");
+                    return;
+                  }
 
-                  // final paywall = await Adapty().getPaywall(
-                  //   placementId: 'placement-pro',
-                  //   locale: 'en',
-                  // );
+                  final paywall = await Adapty().getPaywall(
+                    placementId: 'placement-pro',
+                    locale: 'en',
+                  );
 
-                  // final view = await AdaptyUI().createPaywallView(
-                  //   paywall: paywall,
-                  // );
-                  // await view.present();
+                  final view = await AdaptyUI().createPaywallView(
+                    paywall: paywall,
+                  );
+                  await view.present();
+                  AnalyticsService.analytics
+                      .logEvent(name: 'Settings Paywall Giriş');
                 },
                 child: Stack(children: [
                   Container(

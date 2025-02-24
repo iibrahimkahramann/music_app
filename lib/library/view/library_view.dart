@@ -9,7 +9,7 @@ import 'package:music_app/config/theme/custom_theme.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/bar/appbar/app_bar.dart';
 import 'package:music_app/bar/navbar/nav_bar.dart';
-import 'package:music_app/music_player_provider.dart';
+import 'package:music_app/config/providers/music_player_provider.dart';
 
 class LibraryView extends ConsumerWidget {
   const LibraryView({super.key});
@@ -44,14 +44,7 @@ class LibraryView extends ConsumerWidget {
                         style: CustomTheme.textTheme(context).bodyLarge,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: width * 0.56),
-                        child: Image.asset(
-                          'assets/icons/mix.png',
-                          height: height * 0.029,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: width * 0.05),
+                        padding: EdgeInsets.only(left: width * 0.67),
                         child: GestureDetector(
                           onTap: isPickingFile
                               ? null // Eğer zaten dosya seçiliyorsa tıklamayı devre dışı bırak

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -9,7 +10,13 @@ class SplashScreen extends StatelessWidget {
     Future.delayed(
       const Duration(seconds: 2),
       () async {
-        context.go('/onboarding-one');
+        final prefs = await SharedPreferences.getInstance();
+        final onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
+        if (onboardingSeen) {
+          context.go('/library');
+        } else {
+          context.go('/onboarding-one');
+        }
       },
     );
 

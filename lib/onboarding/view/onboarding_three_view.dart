@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingThreeView extends StatelessWidget {
   const OnboardingThreeView({super.key});
@@ -40,6 +41,8 @@ class OnboardingThreeView extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('onboardingSeen', true);
                     context.go('/library');
                   },
                   child: Container(
