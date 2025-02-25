@@ -16,7 +16,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           SizedBox(
             height: kToolbarHeight,
             child: Padding(
-              padding: EdgeInsets.only(right: width * 0.6),
+              padding: EdgeInsets.only(left: width * 0.02),
               child: Row(
                 children: [
                   Image.asset(

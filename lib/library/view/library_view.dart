@@ -50,7 +50,7 @@ class LibraryView extends ConsumerWidget {
 
             if (!isPremium) {
               final paywall = await Adapty().getPaywall(
-                placementId: 'placement-pro',
+                placementId: 'placement-onboarding',
                 locale: 'en',
               );
 
@@ -116,7 +116,7 @@ class LibraryView extends ConsumerWidget {
 
                                         final paywall =
                                             await Adapty().getPaywall(
-                                          placementId: 'placement-pro',
+                                          placementId: 'placement-button',
                                           locale: 'en',
                                         );
 
@@ -180,8 +180,49 @@ class LibraryView extends ConsumerWidget {
                                     onTap: isPickingFile
                                         ? null
                                         : () async {
-                                            await filePickerNotifier
-                                                .pickMusicFile();
+                                            if (isPremium ||
+                                                buttonPressCount < 1) {
+                                              await filePickerNotifier
+                                                  .pickMusicFile();
+                                              buttonPressCount++;
+                                              await prefs.setInt(
+                                                  'buttonPressCount',
+                                                  buttonPressCount);
+                                            } else {
+                                              final profile =
+                                                  await Adapty().getProfile();
+                                              final isPremium = profile
+                                                      .accessLevels['premium']
+                                                      ?.isActive ??
+                                                  false;
+
+                                              ref
+                                                  .read(isPremiumProvider
+                                                      .notifier)
+                                                  .updatePremiumStatus(
+                                                      isPremium);
+
+                                              if (isPremium) {
+                                                print(
+                                                    "Kullanıcı premium, paywall gösterilmeyecek");
+                                                return;
+                                              }
+
+                                              final paywall =
+                                                  await Adapty().getPaywall(
+                                                placementId: 'placement-button',
+                                                locale: 'en',
+                                              );
+
+                                              final view = await AdaptyUI()
+                                                  .createPaywallView(
+                                                paywall: paywall,
+                                              );
+                                              await view.present();
+                                              AnalyticsService.analytics.logEvent(
+                                                  name:
+                                                      'Library Paywall Giriş');
+                                            }
                                           },
                                     child: Container(
                                       width: width * 0.4,
