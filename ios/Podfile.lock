@@ -10,6 +10,8 @@ PODS:
     - AdaptyUI (= 3.3.6)
   - AdaptyUI (3.3.6):
     - Adapty (= 3.3.6)
+  - app_tracking_transparency (0.0.1):
+    - Flutter
   - audio_service (0.0.1):
     - Flutter
   - audio_session (0.0.1):
@@ -192,6 +194,7 @@ PODS:
 
 DEPENDENCIES:
   - adapty_flutter (from `.symlinks/plugins/adapty_flutter/ios`)
+  - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - audio_service (from `.symlinks/plugins/audio_service/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
@@ -232,6 +235,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   adapty_flutter:
     :path: ".symlinks/plugins/adapty_flutter/ios"
+  app_tracking_transparency:
+    :path: ".symlinks/plugins/app_tracking_transparency/ios"
   audio_service:
     :path: ".symlinks/plugins/audio_service/ios"
   audio_session:
@@ -270,6 +275,7 @@ SPEC CHECKSUMS:
   adapty_flutter: a63da0b9ba0ae1a5e7690eb0b9606e43d666b0b3
   AdaptyPlugin: 5b3eaaa3c48a2a6432ec890c9ed078e4a725eb89
   AdaptyUI: e6796667d96af4aa68f863015f7f5ffb3963679d
+  app_tracking_transparency: e169b653478da7bb15a6c61209015378ca73e375
   audio_service: f509d65da41b9521a61f1c404dd58651f265a567
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c

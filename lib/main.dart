@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:adapty_flutter/adapty_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/router/router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
+import 'package:music_app/config/utilitis/app_tracking.dart';
 import 'package:music_app/firebase_options.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -52,7 +55,7 @@ class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
+    Platform.isIOS ? appTracking() : nottrack();
     _initializeAdapty().then((_) {
       setState(() {
         _appIsReady = true;
