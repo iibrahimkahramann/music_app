@@ -75,14 +75,21 @@ class SettingsView extends ConsumerWidget {
                     child: Column(
                       children: [
                         Lottie.asset('assets/json/pro_background.json',
-                            width: width * 0.60, height: height * 0.08),
+                            width: width * 0.60, height: height * 0.07),
                         Text('Upgrade to Premium'.tr(),
                             style: CustomTheme.textTheme(context).bodyLarge),
                         SizedBox(
                           height: height * 0.01,
                         ),
-                        Text('Join us to benefit from privileges'.tr(),
-                            style: CustomTheme.textTheme(context).bodyMedium),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: width * 0.09, right: width * 0.09),
+                          child: Text(
+                            'Join us to benefit from privileges'.tr(),
+                            style: CustomTheme.textTheme(context).bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ],
                     ),
                   ),

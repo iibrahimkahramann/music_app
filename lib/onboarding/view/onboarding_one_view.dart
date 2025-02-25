@@ -12,7 +12,12 @@ class OnboardingOneView extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset('assets/images/onboarding-one-background.png'),
+          Image.asset(
+            'assets/images/onboarding-one-background.png',
+            fit: BoxFit.cover,
+            width: width,
+            height: height,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: height * 0.02),
             child: Column(
@@ -35,26 +40,27 @@ class OnboardingOneView extends StatelessWidget {
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                 ),
-                SizedBox(
-                  height: height * 0.62,
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    context.go('/onboarding-two');
-                  },
-                  child: Container(
-                    width: width * 0.93,
-                    height: height * 0.07,
-                    decoration: BoxDecoration(
-                      color: CustomTheme.accentColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Contiune',
-                        style: CustomTheme.textTheme(context)
-                            .bodyLarge
-                            ?.copyWith(color: Colors.white),
+                Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: height * 0.02),
+                  child: GestureDetector(
+                    onTap: () async {
+                      context.go('/onboarding-two');
+                    },
+                    child: Container(
+                      width: width * 0.93,
+                      height: height * 0.07,
+                      decoration: BoxDecoration(
+                        color: CustomTheme.accentColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Contiune',
+                          style: CustomTheme.textTheme(context)
+                              .bodyLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),

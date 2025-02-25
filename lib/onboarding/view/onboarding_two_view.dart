@@ -12,7 +12,12 @@ class OnboardingTwoView extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset('assets/images/onboarding-background.png'),
+          Image.asset(
+            'assets/images/onboarding-background.png',
+            fit: BoxFit.cover,
+            width: width,
+            height: height,
+          ),
           Column(
             children: [
               Align(
@@ -20,7 +25,7 @@ class OnboardingTwoView extends StatelessWidget {
                 child: Image.asset('assets/images/phone-two.png'),
               ),
               SizedBox(
-                height: height * 0.07,
+                height: height * 0.09,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.05),
@@ -30,24 +35,27 @@ class OnboardingTwoView extends StatelessWidget {
                   style: CustomTheme.textTheme(context).bodyLarge,
                 ),
               ),
-              SizedBox(height: height * 0.112),
-              GestureDetector(
-                onTap: () async {
-                  context.go('/onboarding-three');
-                },
-                child: Container(
-                  width: width * 0.93,
-                  height: height * 0.07,
-                  decoration: BoxDecoration(
-                    color: CustomTheme.accentColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Contiune',
-                      style: CustomTheme.textTheme(context)
-                          .bodyLarge
-                          ?.copyWith(color: Colors.white),
+              Spacer(),
+              Padding(
+                padding: EdgeInsets.only(bottom: height * 0.04),
+                child: GestureDetector(
+                  onTap: () async {
+                    context.go('/onboarding-three');
+                  },
+                  child: Container(
+                    width: width * 0.93,
+                    height: height * 0.07,
+                    decoration: BoxDecoration(
+                      color: CustomTheme.accentColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Contiune',
+                        style: CustomTheme.textTheme(context)
+                            .bodyLarge
+                            ?.copyWith(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),

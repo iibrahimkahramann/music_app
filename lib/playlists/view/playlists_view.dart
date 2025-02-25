@@ -34,13 +34,14 @@ class PlaylistsView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Playlists'.tr(),
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: width * 0.626),
+                    padding: EdgeInsets.only(right: width * 0.02),
                     child: GestureDetector(
                       onTap: () =>
                           showAddPlaylistDialog(context, playlistNotifier),
@@ -92,6 +93,7 @@ class PlaylistsView extends ConsumerWidget {
                                 'Add Playlists'.tr(),
                                 style:
                                     CustomTheme.textTheme(context).bodyMedium,
+                                textAlign: TextAlign.center,
                               )),
                             ),
                           )
@@ -220,7 +222,8 @@ class PlaylistsView extends ConsumerWidget {
                                                                     'Delete Playlist'
                                                                         .tr()),
                                                                 content: Text(
-                                                                    'Are you sure you want to delete this playlist?'),
+                                                                    'Are you sure you want to delete this playlist?'
+                                                                        .tr()),
                                                                 actions: <Widget>[
                                                                   CupertinoDialogAction(
                                                                     isDefaultAction:

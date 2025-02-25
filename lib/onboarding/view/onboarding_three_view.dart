@@ -13,7 +13,12 @@ class OnboardingThreeView extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset('assets/images/onboarding-three-background.png'),
+          Image.asset(
+            'assets/images/onboarding-three-background.png',
+            fit: BoxFit.cover,
+            width: width,
+            height: height,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: height * 0.02),
             child: Column(
@@ -36,28 +41,29 @@ class OnboardingThreeView extends StatelessWidget {
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
                 ),
-                SizedBox(
-                  height: height * 0.62,
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool('onboardingSeen', true);
-                    context.go('/library');
-                  },
-                  child: Container(
-                    width: width * 0.93,
-                    height: height * 0.07,
-                    decoration: BoxDecoration(
-                      color: CustomTheme.accentColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Let\'s Start',
-                        style: CustomTheme.textTheme(context)
-                            .bodyLarge
-                            ?.copyWith(color: Colors.white),
+                Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: height * 0.02),
+                  child: GestureDetector(
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('onboardingSeen', true);
+                      context.go('/library');
+                    },
+                    child: Container(
+                      width: width * 0.93,
+                      height: height * 0.07,
+                      decoration: BoxDecoration(
+                        color: CustomTheme.accentColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Let\'s Start',
+                          style: CustomTheme.textTheme(context)
+                              .bodyLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),

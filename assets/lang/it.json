@@ -25,5 +25,9 @@
     "Delete Music File": "Elimina File Musicale",
     "Songs": "Canzoni",
     "Select": "Seleziona",
-    "Music added to playlist": "Musica aggiunta alla playlist"
+    "Music added to playlist": "Musica aggiunta alla playlist",
+    "Playlist name": "Nome della Playlist",
+    "Create": "Crea",
+    "Playlist": "Playlist",
+    "Are you sure you want to delete this music file from the playlist?": "Sei sicuro di voler eliminare questo file musicale dalla playlist?"
 }

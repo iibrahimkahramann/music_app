@@ -25,5 +25,9 @@
     "Delete Music File": "Musikdatei löschen",
     "Songs": "Lieder",
     "Select": "Auswählen",
-    "Music added to playlist": "Musik zur Wiedergabeliste hinzugefügt"
+    "Music added to playlist": "Musik zur Wiedergabeliste hinzugefügt",
+    "Playlist name": "Wiedergabelistenname",
+    "Create": "Erstellen",
+    "Playlist": "Wiedergabeliste",
+    "Are you sure you want to delete this music file from the playlist?": "Möchten Sie diese Musikdatei wirklich aus der Wiedergabeliste löschen?"
 }

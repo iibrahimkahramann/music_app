@@ -102,7 +102,9 @@ class MusicBar extends ConsumerWidget {
                         currentMusicFile.createdAt != null
                             ? '${currentMusicFile.createdAt!.day}/${currentMusicFile.createdAt!.month}/${currentMusicFile.createdAt!.year}'
                             : 'Tarih bilgisi yok',
-                        style: CustomTheme.textTheme(context).bodySmall,
+                        style: CustomTheme.textTheme(context)
+                            .bodySmall
+                            ?.copyWith(color: Colors.white),
                       ),
                     ],
                   ),

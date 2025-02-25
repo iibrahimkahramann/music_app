@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -41,7 +42,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
           },
         ),
         title: Padding(
-          padding: EdgeInsets.only(left: width * 0.19),
+          padding: EdgeInsets.only(left: width * 0.1),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -116,8 +117,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                         '/playlist-add-music?playlistId=${widget.playlistId}');
                                   },
                                   child: Container(
-                                    width: width * 0.5,
-                                    height: height * 0.05,
+                                    width: width * 0.6,
+                                    height: height * 0.06,
                                     decoration: BoxDecoration(
                                       color: CustomTheme.accentColor,
                                       borderRadius: BorderRadius.circular(50),
@@ -136,8 +137,8 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      left: width * 0.2,
-                                      right: width * 0.2,
+                                      left: width * 0.15,
+                                      right: width * 0.15,
                                       top: height * 0.0),
                                   child: Text(
                                     'No Music Yet. Add Music by Pressing the Add Music Button'
@@ -340,12 +341,12 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                               context,
                                                                           builder:
                                                                               (BuildContext context) {
-                                                                            return AlertDialog(
+                                                                            return CupertinoAlertDialog(
                                                                               title: Text(
                                                                                 'Delete Music File'.tr(),
                                                                               ),
                                                                               content: Text(
-                                                                                'Are you sure you want to delete this music file?'.tr(),
+                                                                                'Are you sure you want to delete this music file from the playlist?'.tr(),
                                                                               ),
                                                                               actions: <Widget>[
                                                                                 TextButton(
@@ -356,13 +357,10 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                                                                     'No'.tr(),
                                                                                   ),
                                                                                 ),
-                                                                                TextButton(
-                                                                                  onPressed: () {
-                                                                                    Navigator.pop(context, true);
-                                                                                  },
-                                                                                  child: Text(
-                                                                                    'Yes'.tr(),
-                                                                                  ),
+                                                                                CupertinoDialogAction(
+                                                                                  isDestructiveAction: true,
+                                                                                  child: Text('Delete'.tr()),
+                                                                                  onPressed: () => Navigator.of(context).pop(true),
                                                                                 ),
                                                                               ],
                                                                             );
