@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
         final prefs = await SharedPreferences.getInstance();
         final onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
         if (onboardingSeen) {
-          context.go('/onboarding-one');
+          context.go('/library');
         } else {
           context.go('/onboarding-one');
         }

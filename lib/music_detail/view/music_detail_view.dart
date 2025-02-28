@@ -118,10 +118,19 @@ class MusicDetailView extends ConsumerWidget {
                   ),
                   SizedBox(height: height * 0.02),
                   Slider(
-                    value: (player.position).inSeconds.toDouble(),
+                    value: player.position.inSeconds.toDouble(),
                     min: 0,
                     max: player.duration.inSeconds.toDouble(),
                     onChanged: (value) {
+                      ref
+                          .read(musicPlayerProvider((
+                            musicFile: musicFile,
+                            onNext: onNext,
+                            onPrevious: onPrevious
+                          )).notifier)
+                          .seek(Duration(seconds: value.toInt()));
+                    },
+                    onChangeEnd: (value) {
                       ref
                           .read(musicPlayerProvider((
                             musicFile: musicFile,

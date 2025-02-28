@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -35,7 +36,7 @@ class OnboardingOneView extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                   child: Text(
-                    'Press the Add Music Button to Add Music',
+                    'Press the Add Music Button to Add Music'.tr(),
                     textAlign: TextAlign.center,
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
@@ -56,7 +57,7 @@ class OnboardingOneView extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          'Contiune',
+                          'Continue'.tr(),
                           style: CustomTheme.textTheme(context)
                               .bodyLarge
                               ?.copyWith(color: Colors.white),

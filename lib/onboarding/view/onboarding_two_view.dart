@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -22,15 +23,18 @@ class OnboardingTwoView extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: Image.asset('assets/images/phone-two.png'),
+                child: Image.asset(
+                  'assets/images/phone-two.png',
+                  height: height * 0.65,
+                ),
               ),
               SizedBox(
-                height: height * 0.09,
+                height: height * 0.06,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                 child: Text(
-                  'Select the Music File You Want to Add',
+                  'Select the Music File You Want to Add'.tr(),
                   textAlign: TextAlign.center,
                   style: CustomTheme.textTheme(context).bodyLarge,
                 ),
@@ -51,7 +55,7 @@ class OnboardingTwoView extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'Contiune',
+                        'Continue'.tr(),
                         style: CustomTheme.textTheme(context)
                             .bodyLarge
                             ?.copyWith(color: Colors.white),

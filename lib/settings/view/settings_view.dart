@@ -18,6 +18,8 @@ class SettingsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final isPremium = ref.watch(isPremiumProvider);
+
     return Scaffold(
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
@@ -64,7 +66,7 @@ class SettingsView extends ConsumerWidget {
                 child: Stack(children: [
                   Container(
                     width: width * 0.95,
-                    height: height * 0.18,
+                    height: height * 0.2,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/pro_background.png'),
@@ -75,9 +77,13 @@ class SettingsView extends ConsumerWidget {
                     child: Column(
                       children: [
                         Lottie.asset('assets/json/pro_background.json',
-                            width: width * 0.60, height: height * 0.07),
-                        Text('Upgrade to Premium'.tr(),
-                            style: CustomTheme.textTheme(context).bodyLarge),
+                            width: width * 0.60, height: height * 0.06),
+                        Text(
+                          isPremium
+                              ? 'You are premium'.tr()
+                              : 'Upgrade to Premium'.tr(),
+                          style: CustomTheme.textTheme(context).bodyLarge,
+                        ),
                         SizedBox(
                           height: height * 0.01,
                         ),
@@ -85,7 +91,9 @@ class SettingsView extends ConsumerWidget {
                           padding: EdgeInsets.only(
                               left: width * 0.09, right: width * 0.09),
                           child: Text(
-                            'Join us to benefit from privileges'.tr(),
+                            isPremium
+                                ? 'Enjoy your premium benefits'.tr()
+                                : 'Join us to benefit from privileges'.tr(),
                             style: CustomTheme.textTheme(context).bodyMedium,
                             textAlign: TextAlign.center,
                           ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/config/theme/custom_theme.dart';
@@ -36,7 +37,7 @@ class OnboardingThreeView extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                   child: Text(
-                    'And Enjoy Music without the Internet',
+                    'And Enjoy Music without the Internet'.tr(),
                     textAlign: TextAlign.center,
                     style: CustomTheme.textTheme(context).bodyLarge,
                   ),
@@ -59,7 +60,7 @@ class OnboardingThreeView extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          'Let\'s Start',
+                          'Continue'.tr(),
                           style: CustomTheme.textTheme(context)
                               .bodyLarge
                               ?.copyWith(color: Colors.white),

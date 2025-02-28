@@ -19,21 +19,22 @@ class CustomTheme {
   static const Color regularColor = Color.fromARGB(255, 142, 142, 142);
 
   static TextTheme textTheme(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return TextTheme(
-      bodyLarge: const TextStyle(
-        fontSize: 24,
+      bodyLarge: TextStyle(
+        fontSize: height * 0.03,
         fontWeight: FontWeight.bold,
         color: boldColor,
         fontFamily: 'Poppins',
       ),
-      bodyMedium: const TextStyle(
-        fontSize: 16,
+      bodyMedium: TextStyle(
+        fontSize: height * 0.017,
         fontWeight: FontWeight.bold,
         color: mediumColor,
         fontFamily: 'Poppins',
       ),
-      bodySmall: const TextStyle(
-        fontSize: 13,
+      bodySmall: TextStyle(
+        fontSize: height * 0.015,
         fontWeight: FontWeight.bold,
         color: regularColor,
       ),
